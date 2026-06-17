@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SetupWizard } from './components/Wizard/SetupWizard'
 import { Sidebar } from './components/Sidebar/Sidebar'
 import { ChatView } from './components/Chat/ChatView'
