@@ -15,8 +15,10 @@ export class OpencodeAdapter implements BackendAdapter {
 
   async *send(message: string, persona?: string): AsyncIterable<MessageChunk> {
     // opencode --json flag is unstable; falls back to stdout line parsing
-    const args = ['run', '--json', message]
+    // NOTE: opencode CLI support for '--' end-of-flags is unconfirmed; applied defensively.
+    const args = ['run', '--json']
     if (persona) args.push('--system-prompt', persona)
+    args.push('--', message)
 
     const chunks: MessageChunk[] = []
     let resolve: (() => void) | null = null
@@ -34,6 +36,12 @@ export class OpencodeAdapter implements BackendAdapter {
     this.proc.on('close', () => {
       done = true
       chunks.push({ type: 'done', content: '' })
+      resolve?.()
+    })
+
+    this.proc.on('error', (err) => {
+      done = true
+      chunks.push({ type: 'error', content: err.message })
       resolve?.()
     })
 

@@ -14,8 +14,10 @@ export class GeminiAdapter implements BackendAdapter {
   }
 
   async *send(message: string, persona?: string): AsyncIterable<MessageChunk> {
-    const args = ['--format', 'json', '-p', message]
+    // NOTE: gemini CLI support for '--' end-of-flags is unconfirmed; applied defensively.
+    const args = ['--format', 'json', '-p']
     if (persona) args.push('--system-prompt', persona)
+    args.push('--', message)
 
     const chunks: MessageChunk[] = []
     let resolve: (() => void) | null = null
@@ -34,6 +36,12 @@ export class GeminiAdapter implements BackendAdapter {
     this.proc.on('close', () => {
       done = true
       chunks.push({ type: 'done', content: '' })
+      resolve?.()
+    })
+
+    this.proc.on('error', (err) => {
+      done = true
+      chunks.push({ type: 'error', content: err.message })
       resolve?.()
     })
 

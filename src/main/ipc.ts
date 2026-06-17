@@ -5,7 +5,7 @@ import { ConvStore } from './store'
 import { probeBackend } from './wizard/probe'
 import { installBackend } from './wizard/install'
 
-export function registerIpcHandlers(win: BrowserWindow): void {
+export function registerIpcHandlers(_win: BrowserWindow): void {
   // chat:send — starts streaming, pushes chat:chunk and chat:done via webContents
   ipcMain.handle(IPC.CHAT_SEND, async (event, { conversationId, message, backend, personaId }) => {
     const adapter = AdapterManager.get(backend) ?? AdapterManager.getActive()
@@ -62,7 +62,6 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     installBackend(backend, line => event.sender.send('wizard:install:line', line)))
 
   ipcMain.handle(IPC.WIZARD_DONE, () => {
-    // Persist wizard-complete flag
-    win.webContents.executeJavaScript(`localStorage.setItem('wizardDone','1')`)
+    // renderer handles its own localStorage
   })
 }

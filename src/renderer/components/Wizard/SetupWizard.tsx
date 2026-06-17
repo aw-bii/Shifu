@@ -16,6 +16,7 @@ export function SetupWizard({ onComplete }: Props) {
   const handleStep2 = () => setStep(3)
   const handleComplete = async () => {
     await markWizardDone()
+    localStorage.setItem('wizardDone', '1')
     onComplete()
   }
 

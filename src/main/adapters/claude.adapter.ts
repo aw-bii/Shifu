@@ -14,8 +14,9 @@ export class ClaudeAdapter implements BackendAdapter {
   }
 
   async *send(message: string, persona?: string): AsyncIterable<MessageChunk> {
-    const args = ['--output-format', 'stream-json', '--print', message]
+    const args = ['--output-format', 'stream-json', '--print']
     if (persona) args.push('--system-prompt', persona)
+    args.push('--', message)
 
     const chunks: MessageChunk[] = []
     let resolve: (() => void) | null = null
@@ -36,6 +37,12 @@ export class ClaudeAdapter implements BackendAdapter {
     this.proc.on('close', () => {
       done = true
       chunks.push({ type: 'done', content: '' })
+      resolve?.()
+    })
+
+    this.proc.on('error', (err) => {
+      done = true
+      chunks.push({ type: 'error', content: err.message })
       resolve?.()
     })
 
