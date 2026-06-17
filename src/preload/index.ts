@@ -1,7 +1,12 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
-// Expose a typed API to the renderer via contextBridge.
-// contextIsolation: true, nodeIntegration: false — no exceptions.
-contextBridge.exposeInMainWorld('api', {
-  // Placeholder — typed handlers added in Task 3 (IPC layer)
+contextBridge.exposeInMainWorld('ipc', {
+  invoke(channel: string, ...args: unknown[]): Promise<unknown> {
+    return ipcRenderer.invoke(channel, ...args)
+  },
+  on(channel: string, listener: (...args: unknown[]) => void): () => void {
+    const wrapped = (_event: unknown, ...args: unknown[]) => listener(...args)
+    ipcRenderer.on(channel, wrapped)
+    return () => ipcRenderer.removeListener(channel, wrapped)
+  },
 })

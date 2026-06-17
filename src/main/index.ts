@@ -1,33 +1,47 @@
-import { app, BrowserWindow } from 'electron'
-import { join } from 'path'
+import { app, BrowserWindow, shell } from 'electron'
+import path from 'path'
+import { initDb } from './store/db'
+import { registerIpcHandlers } from './ipc'
 
-function createWindow(): void {
-  const mainWindow = new BrowserWindow({
-    width: 1280,
+function createWindow(): BrowserWindow {
+  const win = new BrowserWindow({
+    width: 1200,
     height: 800,
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: false,
     },
   })
 
-  // Load the renderer
+  // Open external links in OS browser, not Electron
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
   if (process.env.ELECTRON_RENDERER_URL) {
-    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
+    win.loadURL(process.env.ELECTRON_RENDERER_URL)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    win.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
+
+  return win
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  const userDataPath = app.getPath('userData')
+  initDb(`${userDataPath}/conversations.db`)
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
+  const win = createWindow()
+  registerIpcHandlers(win)
 })
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
