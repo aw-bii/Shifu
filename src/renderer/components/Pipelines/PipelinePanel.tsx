@@ -92,50 +92,56 @@ export function PipelinePanel({ activeTemplateId, onSelect }: Props) {
         </button>
       </div>
 
-      {templates.map(t => (
-        <div
-          key={t.id}
-          className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-sm ${
-            activeTemplateId === t.id
-              ? 'bg-blue-100 dark:bg-blue-900'
-              : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-          }`}
-          onClick={() => onSelect(t)}
-        >
-          <div>
-            <div className="font-medium">{t.name}</div>
-            <div className="text-xs text-gray-400">{t.steps.length} steps</div>
-          </div>
-          <div className="flex gap-1">
-            <button
-              onClick={e => {
-                e.stopPropagation()
-                setEditing({
-                  id: t.id,
-                  name: t.name,
-                  steps: t.steps.map((s: PipelineStep) => ({
-                    stepOrder: s.stepOrder,
-                    backendId: s.backendId,
-                    personaId: s.personaId,
-                  })),
-                })
-              }}
-              className="text-xs text-gray-400 hover:text-gray-700 px-1"
-            >
-              Edit
-            </button>
-            <button
-              onClick={e => {
-                e.stopPropagation()
-                remove(t.id)
-              }}
-              className="text-xs text-red-400 hover:text-red-600 px-1"
-            >
-              Del
-            </button>
-          </div>
+      {templates.length === 0 ? (
+        <div className="text-center text-xs text-gray-400 py-4">
+          No pipeline templates yet. Create one to chain multiple backends in sequence.
         </div>
-      ))}
+      ) : (
+        templates.map(t => (
+          <div
+            key={t.id}
+            className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-sm ${
+              activeTemplateId === t.id
+                ? 'bg-blue-100 dark:bg-blue-900'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+            }`}
+            onClick={() => onSelect(t)}
+          >
+            <div>
+              <div className="font-medium">{t.name}</div>
+              <div className="text-xs text-gray-400">{t.steps.length} steps</div>
+            </div>
+            <div className="flex gap-1">
+              <button
+                onClick={e => {
+                  e.stopPropagation()
+                  setEditing({
+                    id: t.id,
+                    name: t.name,
+                    steps: t.steps.map((s: PipelineStep) => ({
+                      stepOrder: s.stepOrder,
+                      backendId: s.backendId,
+                      personaId: s.personaId,
+                    })),
+                  })
+                }}
+                className="text-xs text-gray-400 hover:text-gray-700 px-1"
+              >
+                Edit
+              </button>
+              <button
+                onClick={e => {
+                  e.stopPropagation()
+                  remove(t.id)
+                }}
+                className="text-xs text-red-400 hover:text-red-600 px-1"
+              >
+                Del
+              </button>
+            </div>
+          </div>
+        ))
+      )}
 
       {editing && (
         <div className="flex flex-col gap-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3">

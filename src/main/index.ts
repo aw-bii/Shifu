@@ -1,12 +1,31 @@
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
-import { initDb } from './store/db'
+import { initDb, getDb } from './store/db'
 import { registerIpcHandlers } from './ipc'
 
+function loadWindowState(): { x?: number; y?: number; width: number; height: number; maximized: boolean } {
+  try {
+    const db = getDb()
+    const data = db.prepare('SELECT value FROM settings WHERE key = ?').get('window_state') as any
+    if (data?.value) return JSON.parse(data.value)
+  } catch { /* fallback */ }
+  return { width: 1200, height: 800, maximized: false }
+}
+
+function saveWindowState(win: BrowserWindow): void {
+  try {
+    const isMaximized = win.isMaximized()
+    const bounds = win.getNormalBounds()
+    const state = { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height, maximized: isMaximized }
+    const db = getDb()
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('window_state', JSON.stringify(state))
+  } catch { /* silent */ }
+}
+
 function createWindow(): BrowserWindow {
+  const state = loadWindowState()
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    ...state,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
@@ -14,6 +33,18 @@ function createWindow(): BrowserWindow {
       sandbox: true,
     },
   })
+
+  if (state.maximized) win.maximize()
+
+  let saveTimer: NodeJS.Timeout | null = null
+  const debouncedSave = () => {
+    if (saveTimer) clearTimeout(saveTimer)
+    saveTimer = setTimeout(() => saveWindowState(win), 500)
+  }
+  win.on('resize', debouncedSave)
+  win.on('move', debouncedSave)
+  win.on('maximize', debouncedSave)
+  win.on('unmaximize', debouncedSave)
 
   // Open external links in OS browser, not Electron
   win.webContents.setWindowOpenHandler(({ url }) => {

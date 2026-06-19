@@ -153,6 +153,12 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
         <span>No persona</span>
       </div>
 
+      {userPersonas.length === 0 && (
+        <div className="text-center text-xs text-gray-400 py-4">
+          No custom personas yet. Create one to save a system prompt for reuse.
+        </div>
+      )}
+
       {userPersonas.map(p => (
         <div
           key={p.id}

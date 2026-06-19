@@ -167,13 +167,33 @@ function App() {
         </div>
 
         <div className="flex flex-1 min-h-0">
-          <ChatView
-            conversationId={activeConvId}
-            backend={backend}
-            personaId={personaId ?? undefined}
-            pipelineTemplate={activePipelineTemplate}
-            onNewConversation={id => setActiveConvId(id)}
-          />
+          {!activeConvId && mode === 'single' ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+              <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-blue-600 dark:text-blue-300" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold mb-2">Welcome to BII Agent Harness</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mb-4">
+                Chat with Claude Code, Gemini CLI, and Opencode from one place. Start a new conversation or pick one from the sidebar.
+              </p>
+              <button
+                onClick={handleNew}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+              >
+                Start a conversation
+              </button>
+            </div>
+          ) : (
+            <ChatView
+              conversationId={activeConvId}
+              backend={backend}
+              personaId={personaId ?? undefined}
+              pipelineTemplate={activePipelineTemplate}
+              onNewConversation={id => setActiveConvId(id)}
+            />
+          )}
           {showPersonas && (
             <div className="w-72 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
               <PersonaPanel activePersonaId={personaId} onSelect={setPersonaId} />
