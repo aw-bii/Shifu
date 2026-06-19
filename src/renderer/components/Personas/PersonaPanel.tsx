@@ -26,7 +26,7 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
     return Array.from(map.entries())
   }, [templates])
 
-  const startNew = () => setEditing({ name: '', systemPrompt: '', isDefault: false, isTemplate: false, variables: [], category: null, description: null })
+  const startNew = () => { setEditing({ name: '', systemPrompt: '', isDefault: false, isTemplate: false, variables: [], category: null, description: null }); setCreatingFromTemplate(null) }
   const cancel = () => { setEditing(null); setCreatingFromTemplate(null); setVariableValues({}) }
 
   const submit = async () => {
@@ -47,14 +47,14 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
   const startTemplateCreate = (t: Persona) => {
     setCreatingFromTemplate(t)
     const initial: Record<string, string> = {}
-    for (const v of t.variables) initial[v.name] = ''
+    for (const v of t.variables ?? []) initial[v.name] = ''
     setVariableValues(initial)
   }
 
   const submitFromTemplate = async () => {
     if (!creatingFromTemplate) return
     let resolved = creatingFromTemplate.systemPrompt
-    for (const v of creatingFromTemplate.variables) {
+    for (const v of creatingFromTemplate.variables ?? []) {
       resolved = resolved.replaceAll(`{{${v.name}}}`, variableValues[v.name] ?? '')
     }
     await save({
@@ -88,8 +88,11 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
                 {catTemplates.map(t => (
                   <div
                     key={t.id}
+                    role="button"
+                    tabIndex={0}
                     className="flex items-center justify-between p-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                     onClick={() => startTemplateCreate(t)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') startTemplateCreate(t) }}
                   >
                     <div>
                       <div className="font-medium">{t.name}</div>
@@ -111,10 +114,11 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
           {creatingFromTemplate.description && (
             <div className="text-xs text-gray-400">{creatingFromTemplate.description}</div>
           )}
-          {creatingFromTemplate.variables.map(v => (
+          {(creatingFromTemplate.variables ?? []).map(v => (
             <div key={v.name} className="flex flex-col gap-1">
-              <label className="text-xs text-gray-500">{v.label}{v.required && ' *'}</label>
+              <label htmlFor={`var-${v.name}`} className="text-xs text-gray-500">{v.label}{v.required && ' *'}</label>
               <input
+                id={`var-${v.name}`}
                 className="text-sm border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-600"
                 placeholder={v.placeholder}
                 value={variableValues[v.name] ?? ''}
@@ -126,7 +130,7 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
             <button
               onClick={submitFromTemplate}
               className="flex-1 text-sm py-1 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
-              disabled={creatingFromTemplate.variables.some(v => v.required && !variableValues[v.name])}
+              disabled={(creatingFromTemplate.variables ?? []).some(v => v.required && !variableValues[v.name])}
             >
               Create Persona
             </button>
@@ -140,8 +144,11 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
 
       {/* User personas */}
       <div
+        role="button"
+        tabIndex={0}
         className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-sm ${activePersonaId === null ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
         onClick={() => onSelect(null)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onSelect(null) }}
       >
         <span>No persona</span>
       </div>
@@ -149,8 +156,11 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
       {userPersonas.map(p => (
         <div
           key={p.id}
+          role="button"
+          tabIndex={0}
           className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-sm ${activePersonaId === p.id ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           onClick={() => onSelect(p.id)}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onSelect(p.id) }}
         >
           <div>
             <div className="font-medium">{p.name}</div>
