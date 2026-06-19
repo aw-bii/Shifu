@@ -7,11 +7,24 @@ import { PipelinePanel } from './components/Pipelines/PipelinePanel'
 import { SettingsPanel } from './components/Settings/SettingsPanel'
 import { BackendSwitcher } from './components/BackendSwitcher'
 import { usePipelines } from './hooks/usePipelines'
-import { getConversation, setSetting, deleteConversation, renameConversation } from './ipc'
+import { getConversation, setSetting, deleteConversation, renameConversation, getSetting } from './ipc'
 import type { PipelineTemplate, Conversation } from '../shared/types'
 
 function App() {
-  const [wizardDone, setWizardDone] = useState(() => localStorage.getItem('wizardDone') === '1')
+  const [wizardDone, setWizardDone] = useState(false)
+
+  useEffect(() => {
+    if (localStorage.getItem('wizardDone') === '1') {
+      setWizardDone(true)
+      return
+    }
+    getSetting('wizard_done').then(val => {
+      if (val === '1') {
+        localStorage.setItem('wizardDone', '1')
+        setWizardDone(true)
+      }
+    })
+  }, [])
   const [activeConvId, setActiveConvId] = useState<string | null>(null)
   const [activeConvMeta, setActiveConvMeta] = useState<Conversation | null>(null)
   const [mode, setMode] = useState<'single' | 'pipeline'>('single')

@@ -19,7 +19,7 @@ export function WizardStep2({ missing, onNext }: Props) {
 
     // listen for install output lines
     const off = window.ipc.on('wizard:install:line', (line: unknown) => addLine(String(line)))
-    const ok = await installBackend(id)
+    const { success: ok } = await installBackend(id)
     off()
 
     setInstalling(prev => ({ ...prev, [id]: false }))

@@ -49,8 +49,8 @@ export async function listBackends(): Promise<BackendInfo[]> {
 export async function probeBackend(backend: string): Promise<{ available: boolean; authenticated: boolean }> {
   return window.ipc.invoke(IPC.WIZARD_PROBE, { backend }) as Promise<any>
 }
-export async function installBackend(backend: string): Promise<boolean> {
-  return window.ipc.invoke(IPC.WIZARD_INSTALL, { backend }) as Promise<boolean>
+export async function installBackend(backend: string): Promise<{ success: boolean; error?: string }> {
+  return window.ipc.invoke(IPC.WIZARD_INSTALL, { backend }) as Promise<{ success: boolean; error?: string }>
 }
 export async function markWizardDone(): Promise<void> {
   await window.ipc.invoke(IPC.WIZARD_DONE)
