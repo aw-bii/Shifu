@@ -145,3 +145,42 @@ describe('ConvStore pipeline CRUD', () => {
     expect(msgs.find(m => m.id === msg.id)?.stepIndex).toBe(1)
   })
 })
+
+describe('ConvStore attachment CRUD', () => {
+  it('createAttachment and listAttachments round-trip', () => {
+    const conv = ConvStore.createConversation('Attach test', 'claude', null)
+    const msg = ConvStore.createMessage({
+      conversationId: conv.id, role: 'user', content: 'hi', backend: 'claude', stepIndex: null,
+    })
+    const att = ConvStore.createAttachment({
+      messageId: msg.id,
+      originalName: 'report.pdf',
+      storedPath: '/tmp/report.pdf',
+      mimeType: 'application/pdf',
+      sizeBytes: 12345,
+      extractedText: 'some text',
+      extractionError: false,
+    })
+    expect(att.id).toBeTruthy()
+    expect(att.originalName).toBe('report.pdf')
+
+    const list = ConvStore.listAttachments(msg.id)
+    expect(list).toHaveLength(1)
+    expect(list[0].id).toBe(att.id)
+    expect(list[0].extractedText).toBe('some text')
+    expect(list[0].extractionError).toBe(false)
+  })
+
+  it('deleteAttachmentsForMessage removes all attachments', () => {
+    const conv = ConvStore.createConversation('Delete att test', 'claude', null)
+    const msg = ConvStore.createMessage({
+      conversationId: conv.id, role: 'user', content: 'hi', backend: 'claude', stepIndex: null,
+    })
+    ConvStore.createAttachment({
+      messageId: msg.id, originalName: 'a.pdf', storedPath: '/tmp/a.pdf',
+      mimeType: 'application/pdf', sizeBytes: 100, extractedText: null, extractionError: false,
+    })
+    ConvStore.deleteAttachmentsForMessage(msg.id)
+    expect(ConvStore.listAttachments(msg.id)).toHaveLength(0)
+  })
+})

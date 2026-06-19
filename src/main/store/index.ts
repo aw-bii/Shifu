@@ -1,5 +1,5 @@
 import { getDb } from './db'
-import type { Conversation, Message, Persona, PipelineTemplate, PipelineStep } from '../../shared/types'
+import type { Conversation, Message, Persona, PipelineTemplate, PipelineStep, Attachment } from '../../shared/types'
 
 export const ConvStore = {
   createConversation(title: string, backend: string, personaId: string | null): Conversation {
@@ -160,6 +160,36 @@ export const ConvStore = {
 
   deletePipelineTemplate(id: string): void {
     getDb().prepare('DELETE FROM pipeline_templates WHERE id = ?').run(id)
+  },
+
+  createAttachment(a: Omit<Attachment, 'id' | 'createdAt'>): Attachment {
+    const db = getDb()
+    const id = crypto.randomUUID()
+    const now = Date.now()
+    db.prepare(`
+      INSERT INTO attachments (id, message_id, original_name, stored_path, mime_type, size_bytes, extracted_text, extraction_error, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, a.messageId, a.originalName, a.storedPath, a.mimeType, a.sizeBytes, a.extractedText ?? null, a.extractionError ? 1 : 0, now)
+    return { ...a, id, createdAt: now }
+  },
+
+  listAttachments(messageId: string): Attachment[] {
+    const rows = getDb().prepare('SELECT * FROM attachments WHERE message_id = ? ORDER BY created_at ASC').all(messageId) as any[]
+    return rows.map(r => ({
+      id: r.id,
+      messageId: r.message_id,
+      originalName: r.original_name,
+      storedPath: r.stored_path,
+      mimeType: r.mime_type,
+      sizeBytes: r.size_bytes,
+      extractedText: r.extracted_text ?? null,
+      extractionError: r.extraction_error === 1,
+      createdAt: r.created_at,
+    }))
+  },
+
+  deleteAttachmentsForMessage(messageId: string): void {
+    getDb().prepare('DELETE FROM attachments WHERE message_id = ?').run(messageId)
   },
 }
 
