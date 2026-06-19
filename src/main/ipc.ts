@@ -1,10 +1,11 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, app } from 'electron'
 import { IPC } from '../shared/ipc'
 import { AdapterManager } from './adapters/manager'
 import { ConvStore } from './store'
 import { probeBackend } from './wizard/probe'
 import { installBackend } from './wizard/install'
 import { pipelineRunner } from './pipeline/runner'
+import { AttachmentService } from './attachments/service'
 
 export const MAX_PROMPT_LENGTH = 100_000
 export const MAX_MESSAGE_LENGTH = 100_000
@@ -17,7 +18,7 @@ export function validatePersona(p: { systemPrompt?: string; name?: string }): vo
 
 export function registerIpcHandlers(_win: BrowserWindow): void {
   // chat:send — starts streaming, pushes chat:chunk and chat:done via webContents
-  ipcMain.handle(IPC.CHAT_SEND, async (event, { conversationId, message, backend, personaId }) => {
+  ipcMain.handle(IPC.CHAT_SEND, async (event, { conversationId, message, backend, personaId, messageId: pregenMessageId }) => {
     if (typeof message !== 'string') {
       throw new Error('Message must be a string')
     }
@@ -36,8 +37,10 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
 
     ConvStore.createMessage({ conversationId: conv.id, role: 'user', content: message, backend: adapter.id, stepIndex: null })
 
+    const attachments = pregenMessageId ? AttachmentService.listForMessage(pregenMessageId) : []
+
     let fullContent = ''
-    for await (const chunk of adapter.send(message, persona?.systemPrompt)) {
+    for await (const chunk of adapter.send(message, persona?.systemPrompt, attachments)) {
       if (chunk.type === 'text') fullContent += chunk.content
       event.sender.send(IPC.CHAT_CHUNK, { ...chunk, conversationId: conv.id })
       if (chunk.type === 'done') break
@@ -151,5 +154,13 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
 
   ipcMain.handle(IPC.PIPELINE_ABORT, (_event, { conversationId }) => {
     pipelineRunner.abort(conversationId)
+  })
+
+  ipcMain.handle(IPC.ATTACHMENT_INGEST, async (_event, { filePaths, messageId }) => {
+    return AttachmentService.ingest(filePaths, messageId, app.getPath('userData'))
+  })
+
+  ipcMain.handle(IPC.ATTACHMENT_LIST, (_event, { messageId }) => {
+    return AttachmentService.listForMessage(messageId)
   })
 }

@@ -28,7 +28,7 @@ export const IPC = {
 export type IpcChannels = typeof IPC
 
 export interface IpcInvokeMap {
-  [IPC.CHAT_SEND]:         { conversationId: string | null; message: string; backend: string; personaId?: string }
+  [IPC.CHAT_SEND]:         { conversationId: string | null; message: string; backend: string; personaId?: string; messageId?: string }
   [IPC.CHAT_ABORT]:        { conversationId: string }
   [IPC.CONV_LIST]:         { limit: number; offset: number }
   [IPC.CONV_GET]:          { conversationId: string }
