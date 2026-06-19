@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-19T00:00:00.000Z",
+  "title": "Design System: BII Agent Harness",
+  "extensions": {
+    "colorMeta": {
+      "ink-blue": {
+        "role": "primary",
+        "displayName": "Ink Blue",
+        "canonical": "oklch(52% 0.26 264)",
+        "tonalRamp": ["#060c20", "#0d1e50", "#1230a0", "#1a47c8", "#2563eb", "#5b84f4", "#9ab8fb", "#dce8fd"]
+      },
+      "ink-blue-deep": {
+        "role": "primary",
+        "displayName": "Ink Blue Deep",
+        "canonical": "oklch(44% 0.25 264)",
+        "tonalRamp": ["#060c20", "#0d1e50", "#1230a0", "#1a47c8", "#1d4ed8", "#4f7df2", "#95b2fb", "#dce8fd"]
+      },
+      "ink-blue-ghost": {
+        "role": "primary",
+        "displayName": "Ink Blue Ghost",
+        "canonical": "oklch(93% 0.05 264)",
+        "tonalRamp": ["#060c20", "#0d1e50", "#1230a0", "#1a47c8", "#2563eb", "#5b84f4", "#9ab8fb", "#dbeafe"]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Danger",
+        "canonical": "oklch(63% 0.24 27)",
+        "tonalRamp": ["#25070a", "#551015", "#871b1c", "#bf2c2c", "#ef4444", "#f87171", "#fbb4b4", "#fee8e8"]
+      },
+      "danger-deep": {
+        "role": "secondary",
+        "displayName": "Danger Deep",
+        "canonical": "oklch(55% 0.23 27)",
+        "tonalRamp": ["#25070a", "#551015", "#871b1c", "#bf2c2c", "#dc2626", "#f47474", "#fab0b0", "#fee8e8"]
+      },
+      "danger-muted": {
+        "role": "secondary",
+        "displayName": "Danger Muted",
+        "canonical": "oklch(73% 0.17 27)",
+        "tonalRamp": ["#25070a", "#551015", "#871b1c", "#bf2c2c", "#ef4444", "#f87171", "#fbb4b4", "#fee8e8"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#ffffff"]
+      },
+      "surface-subtle": {
+        "role": "neutral",
+        "displayName": "Surface Subtle",
+        "canonical": "oklch(98% 0.002 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#9ca3af", "#d1d5db", "#f3f4f6", "#f9fafb"]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Surface Dark",
+        "canonical": "oklch(17% 0.015 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"]
+      },
+      "surface-darker": {
+        "role": "neutral",
+        "displayName": "Surface Darker",
+        "canonical": "oklch(6% 0.010 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"]
+      },
+      "bubble-light": {
+        "role": "neutral",
+        "displayName": "Bubble Light",
+        "canonical": "oklch(96% 0.003 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#9ca3af", "#d1d5db", "#f3f4f6", "#fafafa"]
+      },
+      "bubble-dark": {
+        "role": "neutral",
+        "displayName": "Bubble Dark",
+        "canonical": "oklch(22% 0.018 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"]
+      },
+      "border-light": {
+        "role": "neutral",
+        "displayName": "Border Light",
+        "canonical": "oklch(91% 0.005 264)",
+        "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f9fafb"]
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Border Subtle",
+        "canonical": "oklch(85% 0.007 264)",
+        "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f9fafb"]
+      },
+      "border-dark": {
+        "role": "neutral",
+        "displayName": "Border Dark",
+        "canonical": "oklch(32% 0.020 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Text Primary",
+        "canonical": "oklch(17% 0.015 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"]
+      },
+      "text-primary-inv": {
+        "role": "neutral",
+        "displayName": "Text Primary Inverse",
+        "canonical": "oklch(96% 0.003 264)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#9ca3af", "#d1d5db", "#f3f4f6", "#fafafa"]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Text Muted",
+        "canonical": "oklch(67% 0.010 264)",
+        "tonalRamp": ["#030712", "#111827", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db", "#f3f4f6"]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel section headers and app name only. Maximum one per panel."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All message content, button labels, form labels, and conversation list titles."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Timestamps, metadata rows, secondary button text, and all subordinate UI copy."
+      }
+    },
+    "shadows": [
+      {
+        "name": "modal-card",
+        "value": "0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1)",
+        "purpose": "Setup wizard card only. Establishes the floating-card-over-dimmed-background metaphor. Not used anywhere else in the application."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for background color transitions on hover/active state changes. Duration: 150ms."
+      }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The sole primary action on a surface — send message, save persona, create conversation.",
+      "html": "<button class=\"ds-btn-primary\">Send</button>",
+      "css": ".ds-btn-primary { background: #2563eb; color: #ffffff; padding: 12px 16px; border-radius: 12px; border: none; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.55; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: #1d4ed8; } .ds-btn-primary:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Compact Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Small-scale primary for sidebar header (+ New) and panel action rows.",
+      "html": "<button class=\"ds-btn-primary-compact\">+ New</button>",
+      "css": ".ds-btn-primary-compact { background: #2563eb; color: #ffffff; padding: 4px 8px; border-radius: 6px; border: none; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 400; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary-compact:hover { background: #1d4ed8; } .ds-btn-primary-compact:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Abort/stop. Replaces the primary send button while a response is streaming. Never a permanent fixture.",
+      "html": "<button class=\"ds-btn-danger\">Stop</button>",
+      "css": ".ds-btn-danger { background: #ef4444; color: #ffffff; padding: 12px 16px; border-radius: 12px; border: none; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 400; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-danger:hover { background: #dc2626; } .ds-btn-danger:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary actions: Personas toggle, Cancel in forms. Transparent fill with border.",
+      "html": "<button class=\"ds-btn-ghost\">Personas</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #111827; padding: 4px 8px; border-radius: 6px; border: 1px solid #d1d5db; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 400; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-ghost:hover { background: #f3f4f6; } .ds-btn-ghost:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "Chat compose textarea and persona form inputs. Ring focus, no background change on focus.",
+      "html": "<textarea class=\"ds-input-text\" placeholder=\"Message...\" rows=\"1\"></textarea>",
+      "css": ".ds-input-text { background: #ffffff; color: #111827; padding: 12px 16px; border-radius: 12px; border: 1px solid #d1d5db; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.55; resize: none; max-height: 160px; width: 100%; } .ds-input-text:focus { outline: none; box-shadow: 0 0 0 2px #3b82f6; } .ds-input-text:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Conversation Item",
+      "kind": "nav",
+      "refersTo": "conv-item-active",
+      "description": "Sidebar conversation list row. Title + metadata subordinate row. Truncated to single line.",
+      "html": "<button class=\"ds-conv-item ds-conv-item--active\"><div class=\"ds-conv-item__title\">Research on AI investment trends</div><div class=\"ds-conv-item__meta\">claude · 6/19/2026</div></button>",
+      "css": ".ds-conv-item { display: block; width: 100%; text-align: left; padding: 8px 12px; border-radius: 8px; border: none; background: transparent; color: #111827; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; } .ds-conv-item:hover { background: #f3f4f6; } .ds-conv-item--active { background: #e5e7eb; } .ds-conv-item__title { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-conv-item__meta { font-size: 12px; color: #9ca3af; margin-top: 2px; }"
+    },
+    {
+      "name": "User Message Bubble",
+      "kind": "custom",
+      "description": "Right-aligned user message. Ink Blue fill, white text, 16px radius.",
+      "html": "<div class=\"ds-bubble-user\"><p class=\"ds-bubble-user__content\">What are the key AI investment trends for 2026?</p><div class=\"ds-bubble-meta\">claude · 10:32 AM</div></div>",
+      "css": ".ds-bubble-user { max-width: 80%; margin-left: auto; background: #2563eb; color: #ffffff; border-radius: 16px; padding: 8px 16px; } .ds-bubble-user__content { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; line-height: 1.55; margin: 0; white-space: pre-wrap; } .ds-bubble-meta { font-size: 12px; opacity: 0.5; margin-top: 4px; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }"
+    },
+    {
+      "name": "Assistant Message Bubble",
+      "kind": "custom",
+      "description": "Left-aligned assistant response. Gray fill, primary text. Prose content rendered via react-markdown.",
+      "html": "<div class=\"ds-bubble-assistant\"><div class=\"ds-bubble-assistant__content\">Here are the key trends shaping AI investment in 2026...</div><div class=\"ds-bubble-meta\">claude · 10:32 AM</div></div>",
+      "css": ".ds-bubble-assistant { max-width: 80%; background: #f3f4f6; color: #111827; border-radius: 16px; padding: 8px 16px; } .ds-bubble-assistant__content { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; line-height: 1.55; } .ds-bubble-meta { font-size: 12px; opacity: 0.5; margin-top: 4px; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }"
+    },
+    {
+      "name": "Persona Item (Active)",
+      "kind": "nav",
+      "refersTo": "persona-item-active",
+      "description": "Persona list row in active state. Ink Blue Ghost background. Inline edit/delete actions on hover.",
+      "html": "<div class=\"ds-persona-item ds-persona-item--active\"><div class=\"ds-persona-item__name\">Research Analyst</div><div class=\"ds-persona-item__meta\">default</div></div>",
+      "css": ".ds-persona-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 8px; cursor: pointer; transition: background 0.15s cubic-bezier(0.4, 0, 0.2, 1); font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; } .ds-persona-item:hover { background: #f3f4f6; } .ds-persona-item--active { background: #dbeafe; } .ds-persona-item__name { font-size: 14px; font-weight: 500; color: #111827; } .ds-persona-item__meta { font-size: 12px; color: #2563eb; margin-top: 2px; }"
+    },
+    {
+      "name": "Wizard Progress Bar",
+      "kind": "custom",
+      "description": "3-segment progress indicator for the setup wizard. Filled segments use Ink Blue; unfilled use Border Light.",
+      "html": "<div class=\"ds-wizard-progress\"><div class=\"ds-wizard-progress__segment ds-wizard-progress__segment--filled\"></div><div class=\"ds-wizard-progress__segment ds-wizard-progress__segment--filled\"></div><div class=\"ds-wizard-progress__segment\"></div></div>",
+      "css": ".ds-wizard-progress { display: flex; gap: 4px; } .ds-wizard-progress__segment { height: 4px; flex: 1; border-radius: 9999px; background: #e5e7eb; } .ds-wizard-progress__segment--filled { background: #2563eb; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Research Notebook",
+    "overview": "This system serves careful thinkers who arrive with a question and leave with an answer. Nothing about it signals \"AI product\" — no gradients, no pulsing orbs, no hero metrics. It reads like a well-kept research notebook: structured, consistent, and legible without effort. The interface's silence is intentional. The AI-generated content in the chat window is the product; the interface should be as unobtrusive as good paper.\n\nThe density is deliberately low, the palette is near-monochrome, and the only saturated element (Ink Blue, #2563eb) appears exclusively where action is required. Everything else steps back. Depth is expressed through tonal steps between surfaces, not through shadows or borders that compete with content. The system uses the platform-native font stack on purpose — it makes the tool feel native, not \"web-ported.\"\n\nThis system explicitly rejects: consumer AI product gloss (ChatGPT / Claude.ai web gradient language), feature-heavy sidebars (Notion AI or Copilot-in-Word conventions), generic SaaS dashboard patterns (hero metrics, identical card grids, colorful icon sets), and any decorative use of gradient text, glassmorphism, or animated loading states as primary visual expressions.",
+    "keyCharacteristics": [
+      "Near-monochrome neutral base; one deliberate chromatic accent (Ink Blue)",
+      "Flat elevation throughout; depth via tonal surface layering only",
+      "Two type sizes: 14px body, 12px label; hierarchy through weight, not scale",
+      "Full dark mode; assumed primary working environment for many users",
+      "Whitespace as signal, not waste — generous padding relative to content density",
+      "Every interactive affordance immediately legible; nothing hidden, nothing extra"
+    ],
+    "rules": [
+      {
+        "name": "The Ink Reserve Rule",
+        "body": "Ink Blue appears only on elements requiring immediate user action (buttons, progress indicators, active selections). It does not appear in decorative elements, text emphasis, or illustration. If a screen has no interactive element, it has no blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Color Rule",
+        "body": "Ink Blue and Danger are the only chromatic colors in the system. Any proposal to add a third accent (status green, warning amber, info teal) must justify why tonal neutrals cannot carry the same meaning.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Size Rule",
+        "body": "14px (body) and 12px (label) are the only type sizes in the application shell. There is no display text, headline, or oversized number. When content needs emphasis, use weight (semibold) or spacing — not size escalation.",
+        "section": "typography"
+      },
+      {
+        "name": "The System Font Rule",
+        "body": "No font is fetched from a remote source. The system-ui stack renders the OS's native interface typeface. This is a deliberate choice that makes the tool feel at home on the desktop rather than web-ported. Do not load a web font for the application shell.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "No shadow appears on interactive or content elements. Hover and active states change background tint — they do not add elevation. If a new feature introduces a card component, interrogate whether the card metaphor is the correct affordance before adding any shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Tonal Depth Rule",
+        "body": "Surface depth is expressed through the surface token scale: Surface Subtle (sidebar) → Surface White (main area) in light mode; Surface Darker (root) → Surface Dark (sidebar) in dark mode. Each step communicates hierarchy without visual noise.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use Ink Blue exclusively for interactive affordances that require user action (buttons, progress, active selections). One chromatic voice; use it with discipline.",
+      "Express depth through tonal surface steps: Surface Subtle beneath sidebar, Surface White for main area in light mode; Surface Darker for root, Surface Dark for sidebar in dark mode.",
+      "Render all assistant content through react-markdown's prose system. Do not write custom typography rules for AI-generated output.",
+      "Use rounded-2xl (16px) for message bubbles and the wizard card. Use rounded-xl (12px) for input fields and standard action buttons.",
+      "Keep all text at 14px (body) or 12px (label). Use weight — not size — when content needs emphasis.",
+      "Distinguish destructive actions (stop, delete) with Danger Red text or fill, never Ink Blue.",
+      "Place panel inline forms (persona edit) inline below the list rather than in modals.",
+      "Support full dark mode on every new surface added to the application."
+    ],
+    "donts": [
+      "Don't use gradient text (background-clip: text with a gradient fill). Prohibited without exception.",
+      "Don't use glassmorphism or backdrop-filter blur decoratively. Any new proposal must justify structural necessity.",
+      "Don't use ChatGPT or Claude.ai web visual language: gradient hero banners, glowing orbs, animated pulsing AI thinking spinners as primary UI states.",
+      "Don't import Notion AI or Copilot-in-Word conventions: feature sidebars, template card grids, AI magic iconography, or onboarding tooltips on every surface.",
+      "Don't build generic SaaS dashboard patterns: hero metric cards, grids of identical feature tiles, colorful sidebar icon navigation.",
+      "Don't add shadows to hover states, active states, or any element that isn't functioning as a modal overlay. The only permitted shadow is shadow-xl on the wizard card.",
+      "Don't use border-left or border-right wider than 1px as a colored accent stripe on list items, message bubbles, or content containers.",
+      "Don't add a third chromatic color to the system without retiring one of the two existing accent roles.",
+      "Don't load an external web font for the application shell. The system-ui stack is the deliberate choice.",
+      "Don't use a font size other than 14px or 12px within the application shell. If something needs to stand out, increase weight or add spacing."
+    ]
+  }
+}

@@ -1,0 +1,315 @@
+diff --git a/package-lock.json b/package-lock.json
+index d2134f8..7118271 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -6,13 +6,13 @@
+   "packages": {
+     "": {
+       "name": "bii-agent-harness",
+       "version": "0.1.0",
+       "license": "UNLICENSED",
+       "dependencies": {
+-        "better-sqlite3": "^9.4.3",
++        "better-sqlite3": "^12.11.1",
+         "react": "^18.2.0",
+         "react-dom": "^18.2.0"
+       },
+       "devDependencies": {
+         "@electron-toolkit/eslint-config-prettier": "^2.0.0",
+         "@electron-toolkit/eslint-config-ts": "^2.0.0",
+@@ -3073,20 +3073,23 @@
+       },
+       "engines": {
+         "node": ">=6.0.0"
+       }
+     },
+     "node_modules/better-sqlite3": {
+-      "version": "9.6.0",
+-      "resolved": "https://registry.npmjs.org/better-sqlite3/-/better-sqlite3-9.6.0.tgz",
+-      "integrity": "sha512-yR5HATnqeYNVnkaUTf4bOP2dJSnyhP4puJN/QPRyx4YkBEEUxib422n2XzPqDEHjQQqazoYoADdAm5vE15+dAQ==",
++      "version": "12.11.1",
++      "resolved": "https://registry.npmjs.org/better-sqlite3/-/better-sqlite3-12.11.1.tgz",
++      "integrity": "sha512-dq9AtApgg5PGFtBzPFSBl3HZQjHok5gaQCM6zh2Yk0aSmDCs1CbnVI8/HgASQkNKsWFpseIO9beg5xxpYhbIfA==",
+       "hasInstallScript": true,
+       "license": "MIT",
+       "dependencies": {
+         "bindings": "^1.5.0",
+         "prebuild-install": "^7.1.1"
++      },
++      "engines": {
++        "node": "20.x || 22.x || 23.x || 24.x || 25.x || 26.x"
+       }
+     },
+     "node_modules/binary-extensions": {
+       "version": "2.3.0",
+       "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+       "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+diff --git a/package.json b/package.json
+index 706782a..17cfd18 100644
+--- a/package.json
++++ b/package.json
+@@ -14,13 +14,13 @@
+     "test": "vitest run",
+     "test:watch": "vitest",
+     "test:coverage": "vitest run --coverage",
+     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json"
+   },
+   "dependencies": {
+-    "better-sqlite3": "^9.4.3",
++    "better-sqlite3": "^12.11.1",
+     "react": "^18.2.0",
+     "react-dom": "^18.2.0"
+   },
+   "devDependencies": {
+     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
+     "@electron-toolkit/eslint-config-ts": "^2.0.0",
+diff --git a/src/main/store/db.ts b/src/main/store/db.ts
+new file mode 100644
+index 0000000..1d4c05e
+--- /dev/null
++++ b/src/main/store/db.ts
+@@ -0,0 +1,37 @@
++import Database from 'better-sqlite3'
++import path from 'path'
++import fs from 'fs'
++
++let db: Database.Database
++
++export function initDb(dbPath: string): void {
++  db = new Database(dbPath)
++  db.pragma('journal_mode = WAL')
++  db.pragma('foreign_keys = ON')
++  runMigrations()
++}
++
++export function getDb(): Database.Database {
++  if (!db) throw new Error('DB not initialized — call initDb() first')
++  return db
++}
++
++export function closeDb(): void {
++  if (db) {
++    db.close()
++    db = undefined as unknown as Database.Database
++  }
++}
++
++function runMigrations(): void {
++  const migrationsDir = path.join(__dirname, 'migrations')
++  const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort()
++  db.exec(`CREATE TABLE IF NOT EXISTS _migrations (name TEXT PRIMARY KEY)`)
++  for (const file of files) {
++    const already = db.prepare('SELECT 1 FROM _migrations WHERE name = ?').get(file)
++    if (already) continue
++    const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8')
++    db.exec(sql)
++    db.prepare('INSERT INTO _migrations (name) VALUES (?)').run(file)
++  }
++}
+diff --git a/src/main/store/index.test.ts b/src/main/store/index.test.ts
+new file mode 100644
+index 0000000..f3af405
+--- /dev/null
++++ b/src/main/store/index.test.ts
+@@ -0,0 +1,60 @@
++import { describe, it, expect, beforeEach, afterEach } from 'vitest'
++import { initDb, closeDb } from './db'
++import { ConvStore } from './index'
++import path from 'path'
++import os from 'os'
++import fs from 'fs'
++
++let dbPath: string
++
++beforeEach(() => {
++  dbPath = path.join(os.tmpdir(), `test-${crypto.randomUUID()}.db`)
++  initDb(dbPath)
++})
++
++afterEach(() => {
++  closeDb()
++  fs.unlinkSync(dbPath)
++})
++
++describe('ConvStore.createConversation', () => {
++  it('returns a Conversation with generated id and timestamps', () => {
++    const conv = ConvStore.createConversation('Hello world', 'claude', null)
++    expect(conv.id).toBeTruthy()
++    expect(conv.title).toBe('Hello world')
++    expect(conv.backend).toBe('claude')
++    expect(conv.personaId).toBeNull()
++    expect(conv.createdAt).toBeGreaterThan(0)
++  })
++})
++
++describe('ConvStore.createMessage + getMessages', () => {
++  it('creates and retrieves messages by conversationId', () => {
++    const conv = ConvStore.createConversation('Test', 'claude', null)
++    ConvStore.createMessage({ conversationId: conv.id, role: 'user', content: 'hi', backend: 'claude' })
++    const msgs = ConvStore.getMessages(conv.id)
++    expect(msgs).toHaveLength(1)
++    expect(msgs[0].content).toBe('hi')
++  })
++})
++
++describe('ConvStore.searchMessages', () => {
++  it('finds messages by content keyword', () => {
++    const conv = ConvStore.createConversation('Test', 'claude', null)
++    ConvStore.createMessage({ conversationId: conv.id, role: 'user', content: 'pineapple juice', backend: 'claude' })
++    ConvStore.createMessage({ conversationId: conv.id, role: 'assistant', content: 'mango smoothie', backend: 'claude' })
++    const results = ConvStore.searchMessages('pineapple')
++    expect(results).toHaveLength(1)
++    expect(results[0].content).toBe('pineapple juice')
++  })
++})
++
++describe('ConvStore persona methods', () => {
++  it('creates, lists, and marks default persona', () => {
++    ConvStore.createPersona({ name: 'Coder', systemPrompt: 'You are a coder.', isDefault: false })
++    const p2 = ConvStore.createPersona({ name: 'Writer', systemPrompt: 'You write.', isDefault: true })
++    const personas = ConvStore.listPersonas()
++    expect(personas).toHaveLength(2)
++    expect(ConvStore.getDefaultPersona()?.id).toBe(p2.id)
++  })
++})
+diff --git a/src/main/store/index.ts b/src/main/store/index.ts
+new file mode 100644
+index 0000000..ec4bc36
+--- /dev/null
++++ b/src/main/store/index.ts
+@@ -0,0 +1,89 @@
++import { getDb } from './db'
++import type { Conversation, Message, Persona } from '../../shared/types'
++
++export const ConvStore = {
++  createConversation(title: string, backend: string, personaId: string | null): Conversation {
++    const db = getDb()
++    const id = crypto.randomUUID()
++    const now = Date.now()
++    db.prepare(`INSERT INTO conversations (id, title, backend, persona_id, created_at, updated_at)
++                VALUES (?, ?, ?, ?, ?, ?)`).run(id, title, backend, personaId, now, now)
++    return { id, title, backend, personaId, createdAt: now, updatedAt: now }
++  },
++
++  getConversation(id: string): Conversation | undefined {
++    const row = getDb().prepare('SELECT * FROM conversations WHERE id = ?').get(id) as any
++    return row ? rowToConv(row) : undefined
++  },
++
++  listConversations(limit: number, offset: number): Conversation[] {
++    const rows = getDb().prepare('SELECT * FROM conversations ORDER BY updated_at DESC LIMIT ? OFFSET ?').all(limit, offset) as any[]
++    return rows.map(rowToConv)
++  },
++
++  searchMessages(query: string): Message[] {
++    const rows = getDb().prepare(`
++      SELECT m.* FROM messages m
++      JOIN messages_fts fts ON m.rowid = fts.rowid
++      WHERE messages_fts MATCH ?
++      ORDER BY rank LIMIT 50
++    `).all(query) as any[]
++    return rows.map(rowToMsg)
++  },
++
++  createMessage(msg: Omit<Message, 'id' | 'createdAt'>): Message {
++    const db = getDb()
++    const id = crypto.randomUUID()
++    const now = Date.now()
++    db.prepare(`INSERT INTO messages (id, conversation_id, role, content, backend, created_at)
++                VALUES (?, ?, ?, ?, ?, ?)`).run(id, msg.conversationId, msg.role, msg.content, msg.backend, now)
++    db.prepare('UPDATE conversations SET updated_at = ? WHERE id = ?').run(now, msg.conversationId)
++    return { ...msg, id, createdAt: now }
++  },
++
++  getMessages(conversationId: string): Message[] {
++    const rows = getDb().prepare('SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC').all(conversationId) as any[]
++    return rows.map(rowToMsg)
++  },
++
++  createPersona(p: Omit<Persona, 'id'>): Persona {
++    const db = getDb()
++    const id = crypto.randomUUID()
++    if (p.isDefault) db.prepare('UPDATE personas SET is_default = 0').run()
++    db.prepare(`INSERT INTO personas (id, name, system_prompt, is_default) VALUES (?, ?, ?, ?)`)
++      .run(id, p.name, p.systemPrompt, p.isDefault ? 1 : 0)
++    return { id, ...p }
++  },
++
++  listPersonas(): Persona[] {
++    return (getDb().prepare('SELECT * FROM personas').all() as any[]).map(rowToPersona)
++  },
++
++  updatePersona(id: string, p: Partial<Omit<Persona, 'id'>>): Persona {
++    const db = getDb()
++    if (p.isDefault) db.prepare('UPDATE personas SET is_default = 0').run()
++    if (p.name !== undefined) db.prepare('UPDATE personas SET name = ? WHERE id = ?').run(p.name, id)
++    if (p.systemPrompt !== undefined) db.prepare('UPDATE personas SET system_prompt = ? WHERE id = ?').run(p.systemPrompt, id)
++    if (p.isDefault !== undefined) db.prepare('UPDATE personas SET is_default = ? WHERE id = ?').run(p.isDefault ? 1 : 0, id)
++    return ConvStore.listPersonas().find(x => x.id === id)!
++  },
++
++  deletePersona(id: string): void {
++    getDb().prepare('DELETE FROM personas WHERE id = ?').run(id)
++  },
++
++  getDefaultPersona(): Persona | undefined {
++    const row = getDb().prepare('SELECT * FROM personas WHERE is_default = 1').get() as any
++    return row ? rowToPersona(row) : undefined
++  },
++}
++
++function rowToConv(r: any): Conversation {
++  return { id: r.id, title: r.title, backend: r.backend, personaId: r.persona_id, createdAt: r.created_at, updatedAt: r.updated_at }
++}
++function rowToMsg(r: any): Message {
++  return { id: r.id, conversationId: r.conversation_id, role: r.role, content: r.content, backend: r.backend, createdAt: r.created_at }
++}
++function rowToPersona(r: any): Persona {
++  return { id: r.id, name: r.name, systemPrompt: r.system_prompt, isDefault: r.is_default === 1 }
++}
+diff --git a/src/main/store/migrations/001_initial.sql b/src/main/store/migrations/001_initial.sql
+new file mode 100644
+index 0000000..b8a1cb8
+--- /dev/null
++++ b/src/main/store/migrations/001_initial.sql
+@@ -0,0 +1,40 @@
++CREATE TABLE IF NOT EXISTS conversations (
++  id         TEXT PRIMARY KEY,
++  title      TEXT NOT NULL,
++  backend    TEXT NOT NULL,
++  persona_id TEXT REFERENCES personas(id),
++  created_at INTEGER NOT NULL,
++  updated_at INTEGER NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS personas (
++  id            TEXT PRIMARY KEY,
++  name          TEXT NOT NULL,
++  system_prompt TEXT NOT NULL DEFAULT '',
++  is_default    INTEGER NOT NULL DEFAULT 0
++);
++
++CREATE TABLE IF NOT EXISTS messages (
++  id              TEXT PRIMARY KEY,
++  conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
++  role            TEXT NOT NULL,
++  content         TEXT NOT NULL DEFAULT '',
++  backend         TEXT NOT NULL,
++  created_at      INTEGER NOT NULL
++);
++
++CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts
++  USING fts5(content, content=messages, content_rowid=rowid);
++
++CREATE TRIGGER IF NOT EXISTS messages_fts_insert AFTER INSERT ON messages BEGIN
++  INSERT INTO messages_fts(rowid, content) VALUES (new.rowid, new.content);
++END;
++
++CREATE TRIGGER IF NOT EXISTS messages_fts_delete AFTER DELETE ON messages BEGIN
++  INSERT INTO messages_fts(messages_fts, rowid, content) VALUES ('delete', old.rowid, old.content);
++END;
++
++CREATE TRIGGER IF NOT EXISTS messages_fts_update AFTER UPDATE ON messages BEGIN
++  INSERT INTO messages_fts(messages_fts, rowid, content) VALUES ('delete', old.rowid, old.content);
++  INSERT INTO messages_fts(rowid, content) VALUES (new.rowid, new.content);
++END;
