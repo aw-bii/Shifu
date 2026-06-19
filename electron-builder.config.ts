@@ -15,8 +15,8 @@ export default {
   nsis: { oneClick: false, allowToChangeInstallationDirectory: true },
   publish: {
     provider: "github",
-    owner: "bii",
-    repo: "agent-harness",
+    owner: "aw-bii",
+    repo: "Shifu",
     releaseType: "release",
   },
 } satisfies Configuration;
