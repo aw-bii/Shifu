@@ -67,6 +67,42 @@ describe('ConvStore persona methods', () => {
     expect(personas.some(p => p.id === p2.id)).toBe(true)
     expect(ConvStore.getDefaultPersona()?.id).toBe(p2.id)
   })
+
+  it('creates and retrieves template persona with variable fields', () => {
+    const t = ConvStore.createPersona({
+      name: 'Deep-Dive Template',
+      systemPrompt: 'Analyze {{ticker}}',
+      isDefault: false,
+      isTemplate: true,
+      category: 'Research',
+      description: 'Company analysis',
+      variables: [{ name: 'ticker', label: 'Ticker', placeholder: 'AAPL', required: true }],
+    })
+    expect(t.isTemplate).toBe(true)
+    expect(t.category).toBe('Research')
+    expect(t.description).toBe('Company analysis')
+    expect(t.variables).toHaveLength(1)
+    expect(t.variables[0].name).toBe('ticker')
+
+    // Verify it persists by re-loading
+    const loaded = ConvStore.listPersonas().find(p => p.id === t.id)!
+    expect(loaded.isTemplate).toBe(true)
+    expect(loaded.category).toBe('Research')
+    expect(loaded.variables[0].label).toBe('Ticker')
+  })
+
+  it('updates template fields on an existing persona', () => {
+    const p = ConvStore.createPersona({
+      name: 'Test', systemPrompt: 'Hello', isDefault: false,
+      isTemplate: false, category: null, description: null, variables: [],
+    })
+    ConvStore.updatePersona(p.id, { isTemplate: true, category: 'Analysis', description: 'Test desc', variables: [{ name: 'x', label: 'X', placeholder: '', required: false }] })
+    const loaded = ConvStore.listPersonas().find(x => x.id === p.id)!
+    expect(loaded.isTemplate).toBe(true)
+    expect(loaded.category).toBe('Analysis')
+    expect(loaded.description).toBe('Test desc')
+    expect(loaded.variables[0].name).toBe('x')
+  })
 })
 
 describe('ConvStore pipeline CRUD', () => {

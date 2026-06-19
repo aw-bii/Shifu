@@ -55,8 +55,9 @@ export const ConvStore = {
     const db = getDb()
     const id = crypto.randomUUID()
     if (p.isDefault) db.prepare('UPDATE personas SET is_default = 0').run()
-    db.prepare(`INSERT INTO personas (id, name, system_prompt, is_default) VALUES (?, ?, ?, ?)`)
-      .run(id, p.name, p.systemPrompt, p.isDefault ? 1 : 0)
+    db.prepare(`INSERT INTO personas (id, name, system_prompt, is_default, is_template, category, description, variables)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(id, p.name, p.systemPrompt, p.isDefault ? 1 : 0, p.isTemplate ? 1 : 0, p.category ?? null, p.description ?? null, JSON.stringify(p.variables ?? []))
     return { id, ...p }
   },
 
@@ -67,9 +68,13 @@ export const ConvStore = {
   updatePersona(id: string, p: Partial<Omit<Persona, 'id'>>): Persona {
     const db = getDb()
     if (p.isDefault) db.prepare('UPDATE personas SET is_default = 0').run()
+    if (p.category !== undefined) db.prepare('UPDATE personas SET category = ? WHERE id = ?').run(p.category, id)
+    if (p.description !== undefined) db.prepare('UPDATE personas SET description = ? WHERE id = ?').run(p.description, id)
+    if (p.isDefault !== undefined) db.prepare('UPDATE personas SET is_default = ? WHERE id = ?').run(p.isDefault ? 1 : 0, id)
+    if (p.isTemplate !== undefined) db.prepare('UPDATE personas SET is_template = ? WHERE id = ?').run(p.isTemplate ? 1 : 0, id)
     if (p.name !== undefined) db.prepare('UPDATE personas SET name = ? WHERE id = ?').run(p.name, id)
     if (p.systemPrompt !== undefined) db.prepare('UPDATE personas SET system_prompt = ? WHERE id = ?').run(p.systemPrompt, id)
-    if (p.isDefault !== undefined) db.prepare('UPDATE personas SET is_default = ? WHERE id = ?').run(p.isDefault ? 1 : 0, id)
+    if (p.variables !== undefined) db.prepare('UPDATE personas SET variables = ? WHERE id = ?').run(JSON.stringify(p.variables), id)
     const result = ConvStore.listPersonas().find(x => x.id === id)
     if (!result) throw new Error(`Persona not found: ${id}`)
     return result
