@@ -30,8 +30,13 @@ export const IPC = {
   APP_VERSION:     'app:version',
   CONV_DELETE:     'conv:delete',
   CONV_RENAME:     'conv:rename',
-  UPDATE_DOWNLOAD: 'update:download',
-  UPDATE_INSTALL:  'update:install',
+  UPDATE_DOWNLOAD:    'update:download',
+  UPDATE_INSTALL:     'update:install',
+  UPDATE_STATUS:      'update:status',
+  UPDATE_AVAILABLE:   'update:available',
+  UPDATE_PROGRESS:    'update:progress',
+  UPDATE_ERROR:       'update:error',
+  UPDATE_DOWNLOADED:  'update:downloaded',
 } as const
 
 export type IpcChannels = typeof IPC

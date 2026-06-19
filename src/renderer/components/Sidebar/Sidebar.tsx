@@ -6,7 +6,7 @@ interface Props {
   onNew: () => void
   onDelete: (id: string) => void
   onRename: (id: string, title: string) => void
-  searchInputRef?: React.RefObject<HTMLInputElement | null>
+  searchInputRef?: React.MutableRefObject<HTMLInputElement | null>
   refreshTrigger?: number
 }
 

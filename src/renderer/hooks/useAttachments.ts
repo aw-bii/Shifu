@@ -2,14 +2,14 @@ import { useState, useCallback } from 'react'
 import { ingestAttachments } from '../ipc'
 import type { Attachment } from '../../shared/types'
 
-const SUPPORTED_TYPES = new Set([
+const _SUPPORTED_TYPES = new Set([
   'image/png', 'image/jpeg', 'image/gif', 'image/webp',
   'application/pdf',
   'text/plain', 'text/markdown', 'text/csv',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ])
-const MAX_SIZE = 20 * 1024 * 1024 // 20 MB
+const _MAX_SIZE = 20 * 1024 * 1024 // 20 MB
 
 export function useAttachments() {
   const [pending, setPending] = useState<Attachment[]>([])
