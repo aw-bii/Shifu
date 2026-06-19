@@ -60,6 +60,18 @@ export interface PipelineChunk extends MessageChunk {
 export interface BackendAdapter {
   id: string
   isAvailable(): Promise<boolean>
-  send(message: string, persona?: string): AsyncIterable<MessageChunk>
+  send(message: string, persona?: string, attachments?: Attachment[]): AsyncIterable<MessageChunk>
   abort(): void
+}
+
+export interface Attachment {
+  id: string
+  messageId: string
+  originalName: string
+  storedPath: string
+  mimeType: string
+  sizeBytes: number
+  extractedText: string | null
+  extractionError: boolean
+  createdAt: number
 }
