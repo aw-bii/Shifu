@@ -240,7 +240,10 @@ function App() {
               backend={backend}
               personaId={personaId ?? undefined}
               pipelineTemplate={activePipelineTemplate}
-              onNewConversation={(id) => setActiveConvId(id)}
+              onNewConversation={(id) => {
+                setActiveConvId(id);
+                setRefreshTrigger((n) => n + 1);
+              }}
             />
           )}
           {showPersonas && (
