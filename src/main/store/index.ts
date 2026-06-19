@@ -196,6 +196,22 @@ export const ConvStore = {
   deleteAttachmentsForMessage(messageId: string): void {
     getDb().prepare('DELETE FROM attachments WHERE message_id = ?').run(messageId)
   },
+
+  getSetting(key: string): string | undefined {
+    const row = getDb().prepare('SELECT value FROM settings WHERE key = ?').get(key) as any
+    return row?.value
+  },
+
+  setSetting(key: string, value: string): void {
+    getDb().prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value)
+  },
+
+  getAllSettings(): Record<string, string> {
+    const rows = getDb().prepare('SELECT key, value FROM settings').all() as any[]
+    const result: Record<string, string> = {}
+    for (const r of rows) result[r.key] = r.value
+    return result
+  },
 }
 
 function rowToConv(r: any): Conversation {

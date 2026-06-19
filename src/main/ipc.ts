@@ -83,8 +83,14 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
     installBackend(backend, line => event.sender.send('wizard:install:line', line)))
 
   ipcMain.handle(IPC.WIZARD_DONE, () => {
-    // renderer handles its own localStorage
+    ConvStore.setSetting('wizard_done', '1')
   })
+
+  ipcMain.handle(IPC.APP_VERSION, () => app.getVersion())
+
+  ipcMain.handle(IPC.SETTING_GET, (_event, { key }) => ConvStore.getSetting(key))
+  ipcMain.handle(IPC.SETTING_SET, (_event, { key, value }) => ConvStore.setSetting(key, value))
+  ipcMain.handle(IPC.SETTING_GET_ALL, () => ConvStore.getAllSettings())
 
   ipcMain.handle(IPC.PIPELINE_LIST, () => ConvStore.listPipelineTemplates())
 

@@ -98,3 +98,16 @@ export async function listAttachments(messageId: string): Promise<import('../sha
 export async function getAttachmentDataUrl(storedPath: string): Promise<string> {
   return window.ipc.invoke(IPC.ATTACHMENT_DATA_URL, { storedPath }) as Promise<string>
 }
+export async function getAppVersion(): Promise<string> {
+  return window.ipc.invoke(IPC.APP_VERSION) as Promise<string>
+}
+
+export async function getSetting(key: string): Promise<string | undefined> {
+  return window.ipc.invoke(IPC.SETTING_GET, { key }) as Promise<string | undefined>
+}
+export async function setSetting(key: string, value: string): Promise<void> {
+  await window.ipc.invoke(IPC.SETTING_SET, { key, value })
+}
+export async function getAllSettings(): Promise<Record<string, string>> {
+  return window.ipc.invoke(IPC.SETTING_GET_ALL) as Promise<Record<string, string>>
+}

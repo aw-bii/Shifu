@@ -24,6 +24,10 @@ export const IPC = {
   ATTACHMENT_INGEST:   'attachment:ingest',
   ATTACHMENT_LIST:     'attachment:list',
   ATTACHMENT_DATA_URL: 'attachment:dataurl',
+  SETTING_GET:     'setting:get',
+  SETTING_SET:     'setting:set',
+  SETTING_GET_ALL: 'setting:get-all',
+  APP_VERSION:     'app:version',
 } as const
 
 export type IpcChannels = typeof IPC
@@ -49,6 +53,10 @@ export interface IpcInvokeMap {
   [IPC.ATTACHMENT_INGEST]:   { filePaths: string[]; messageId: string }
   [IPC.ATTACHMENT_LIST]:     { messageId: string }
   [IPC.ATTACHMENT_DATA_URL]: { storedPath: string }
+  [IPC.SETTING_GET]:     { key: string }
+  [IPC.SETTING_SET]:     { key: string; value: string }
+  [IPC.SETTING_GET_ALL]: void
+  [IPC.APP_VERSION]: void
 }
 
 export interface IpcPushMap {

@@ -4,9 +4,10 @@ import { Sidebar } from './components/Sidebar/Sidebar'
 import { ChatView } from './components/Chat/ChatView'
 import { PersonaPanel } from './components/Personas/PersonaPanel'
 import { PipelinePanel } from './components/Pipelines/PipelinePanel'
+import { SettingsPanel } from './components/Settings/SettingsPanel'
 import { BackendSwitcher } from './components/BackendSwitcher'
 import { usePipelines } from './hooks/usePipelines'
-import { getConversation } from './ipc'
+import { getConversation, setSetting } from './ipc'
 import type { PipelineTemplate, Conversation } from '../shared/types'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   const [selectedTemplate, setSelectedTemplate] = useState<PipelineTemplate | null>(null)
   const [showPersonas, setShowPersonas] = useState(false)
   const [showPipelines, setShowPipelines] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const { templates } = usePipelines()
 
   // Load metadata for active conversation to detect pipeline mode
@@ -122,6 +124,15 @@ function App() {
           >
             Pipelines
           </button>
+          <button
+            onClick={() => setShowSettings(v => !v)}
+            className="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+            aria-label="Settings"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
 
         <div className="flex flex-1 min-h-0">
@@ -144,6 +155,16 @@ function App() {
                 onSelect={t => { setSelectedTemplate(t); setMode('pipeline') }}
               />
             </div>
+          )}
+          {showSettings && (
+            <SettingsPanel
+              onClose={() => setShowSettings(false)}
+              onReRunWizard={() => {
+                localStorage.removeItem('wizardDone')
+                setWizardDone(false)
+                setSetting('wizard_done', '0')
+              }}
+            />
           )}
         </div>
       </div>
