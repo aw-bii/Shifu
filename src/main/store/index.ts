@@ -1,5 +1,5 @@
 import { getDb } from './db'
-import type { Conversation, Message, Persona } from '../../shared/types'
+import type { Conversation, Message, Persona, PipelineTemplate, PipelineStep } from '../../shared/types'
 
 export const ConvStore = {
   createConversation(title: string, backend: string, personaId: string | null): Conversation {
@@ -8,7 +8,7 @@ export const ConvStore = {
     const now = Date.now()
     db.prepare(`INSERT INTO conversations (id, title, backend, persona_id, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?)`).run(id, title, backend, personaId, now, now)
-    return { id, title, backend, personaId, createdAt: now, updatedAt: now }
+    return { id, title, backend, personaId, pipelineTemplateId: null, createdAt: now, updatedAt: now }
   },
 
   getConversation(id: string): Conversation | undefined {
@@ -39,8 +39,9 @@ export const ConvStore = {
     const db = getDb()
     const id = crypto.randomUUID()
     const now = Date.now()
-    db.prepare(`INSERT INTO messages (id, conversation_id, role, content, backend, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)`).run(id, msg.conversationId, msg.role, msg.content, msg.backend, now)
+    db.prepare(`INSERT INTO messages (id, conversation_id, role, content, backend, step_index, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)`)
+      .run(id, msg.conversationId, msg.role, msg.content, msg.backend, msg.stepIndex ?? null, now)
     db.prepare('UPDATE conversations SET updated_at = ? WHERE id = ?').run(now, msg.conversationId)
     return { ...msg, id, createdAt: now }
   },
@@ -82,13 +83,107 @@ export const ConvStore = {
     const row = getDb().prepare('SELECT * FROM personas WHERE is_default = 1').get() as any
     return row ? rowToPersona(row) : undefined
   },
+
+  createPipelineConversation(title: string, pipelineTemplateId: string): Conversation {
+    const db = getDb()
+    const id = crypto.randomUUID()
+    const now = Date.now()
+    db.prepare(`INSERT INTO conversations (id, title, backend, persona_id, pipeline_template_id, created_at, updated_at)
+                VALUES (?, ?, 'pipeline', NULL, ?, ?, ?)`)
+      .run(id, title, pipelineTemplateId, now, now)
+    return { id, title, backend: 'pipeline', personaId: null, pipelineTemplateId, createdAt: now, updatedAt: now }
+  },
+
+  createPipelineTemplate(
+    name: string,
+    steps: Array<{ stepOrder: number; backendId: string; personaId: string | null }>
+  ): PipelineTemplate {
+    const db = getDb()
+    const id = crypto.randomUUID()
+    const now = Date.now()
+    db.prepare('INSERT INTO pipeline_templates (id, name, created_at) VALUES (?, ?, ?)').run(id, name, now)
+    const savedSteps: PipelineStep[] = steps.map(s => {
+      const stepId = crypto.randomUUID()
+      db.prepare(`INSERT INTO pipeline_steps (id, template_id, step_order, backend_id, persona_id)
+                  VALUES (?, ?, ?, ?, ?)`)
+        .run(stepId, id, s.stepOrder, s.backendId, s.personaId ?? null)
+      return { id: stepId, templateId: id, stepOrder: s.stepOrder, backendId: s.backendId, personaId: s.personaId }
+    })
+    return { id, name, steps: savedSteps, createdAt: now }
+  },
+
+  listPipelineTemplates(): PipelineTemplate[] {
+    const db = getDb()
+    const templates = db.prepare('SELECT * FROM pipeline_templates ORDER BY created_at DESC').all() as any[]
+    return templates.map(t => {
+      const steps = db.prepare('SELECT * FROM pipeline_steps WHERE template_id = ? ORDER BY step_order ASC').all(t.id) as any[]
+      return {
+        id: t.id,
+        name: t.name,
+        createdAt: t.created_at,
+        steps: steps.map(s => ({ id: s.id, templateId: s.template_id, stepOrder: s.step_order, backendId: s.backend_id, personaId: s.persona_id ?? null })),
+      }
+    })
+  },
+
+  getPipelineTemplate(id: string): PipelineTemplate | undefined {
+    const db = getDb()
+    const t = db.prepare('SELECT * FROM pipeline_templates WHERE id = ?').get(id) as any
+    if (!t) return undefined
+    const steps = db.prepare('SELECT * FROM pipeline_steps WHERE template_id = ? ORDER BY step_order ASC').all(id) as any[]
+    return {
+      id: t.id,
+      name: t.name,
+      createdAt: t.created_at,
+      steps: steps.map(s => ({ id: s.id, templateId: s.template_id, stepOrder: s.step_order, backendId: s.backend_id, personaId: s.persona_id ?? null })),
+    }
+  },
+
+  updatePipelineTemplate(
+    id: string,
+    name: string,
+    steps: Array<{ stepOrder: number; backendId: string; personaId: string | null }>
+  ): PipelineTemplate {
+    const db = getDb()
+    db.prepare('UPDATE pipeline_templates SET name = ? WHERE id = ?').run(name, id)
+    db.prepare('DELETE FROM pipeline_steps WHERE template_id = ?').run(id)
+    const savedSteps: PipelineStep[] = steps.map(s => {
+      const stepId = crypto.randomUUID()
+      db.prepare(`INSERT INTO pipeline_steps (id, template_id, step_order, backend_id, persona_id)
+                  VALUES (?, ?, ?, ?, ?)`)
+        .run(stepId, id, s.stepOrder, s.backendId, s.personaId ?? null)
+      return { id: stepId, templateId: id, stepOrder: s.stepOrder, backendId: s.backendId, personaId: s.personaId }
+    })
+    const t = db.prepare('SELECT * FROM pipeline_templates WHERE id = ?').get(id) as any
+    return { id: t.id, name: t.name, createdAt: t.created_at, steps: savedSteps }
+  },
+
+  deletePipelineTemplate(id: string): void {
+    getDb().prepare('DELETE FROM pipeline_templates WHERE id = ?').run(id)
+  },
 }
 
 function rowToConv(r: any): Conversation {
-  return { id: r.id, title: r.title, backend: r.backend, personaId: r.persona_id, createdAt: r.created_at, updatedAt: r.updated_at }
+  return {
+    id: r.id,
+    title: r.title,
+    backend: r.backend,
+    personaId: r.persona_id,
+    pipelineTemplateId: r.pipeline_template_id ?? null,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }
 }
 function rowToMsg(r: any): Message {
-  return { id: r.id, conversationId: r.conversation_id, role: r.role, content: r.content, backend: r.backend, createdAt: r.created_at }
+  return {
+    id: r.id,
+    conversationId: r.conversation_id,
+    role: r.role,
+    content: r.content,
+    backend: r.backend,
+    stepIndex: r.step_index ?? null,
+    createdAt: r.created_at,
+  }
 }
 function rowToPersona(r: any): Persona {
   return { id: r.id, name: r.name, systemPrompt: r.system_prompt, isDefault: r.is_default === 1 }

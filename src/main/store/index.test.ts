@@ -67,3 +67,81 @@ describe('ConvStore persona methods', () => {
     expect(ConvStore.getDefaultPersona()?.id).toBe(p2.id)
   })
 })
+
+describe('ConvStore pipeline CRUD', () => {
+  it('createPipelineTemplate round-trips name and steps', () => {
+    const t = ConvStore.createPipelineTemplate('Draft+Critique', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'gemini', personaId: null },
+    ])
+    expect(t.name).toBe('Draft+Critique')
+    expect(t.steps).toHaveLength(2)
+    expect(t.steps[0].backendId).toBe('claude')
+    expect(t.steps[1].backendId).toBe('gemini')
+    expect(t.steps[0].stepOrder).toBe(0)
+  })
+
+  it('listPipelineTemplates returns created templates', () => {
+    const t = ConvStore.createPipelineTemplate('Test', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'opencode', personaId: null },
+    ])
+    const list = ConvStore.listPipelineTemplates()
+    expect(list.some(x => x.id === t.id)).toBe(true)
+  })
+
+  it('getPipelineTemplate returns template with steps', () => {
+    const t = ConvStore.createPipelineTemplate('Get test', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'gemini', personaId: null },
+    ])
+    const found = ConvStore.getPipelineTemplate(t.id)
+    expect(found).toBeDefined()
+    expect(found!.steps).toHaveLength(2)
+  })
+
+  it('updatePipelineTemplate replaces steps', () => {
+    const t = ConvStore.createPipelineTemplate('Update test', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'gemini', personaId: null },
+    ])
+    const updated = ConvStore.updatePipelineTemplate(t.id, 'Renamed', [
+      { stepOrder: 0, backendId: 'opencode', personaId: null },
+      { stepOrder: 1, backendId: 'claude', personaId: null },
+    ])
+    expect(updated.name).toBe('Renamed')
+    expect(updated.steps[0].backendId).toBe('opencode')
+  })
+
+  it('deletePipelineTemplate removes template and steps', () => {
+    const t = ConvStore.createPipelineTemplate('Delete test', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'gemini', personaId: null },
+    ])
+    ConvStore.deletePipelineTemplate(t.id)
+    expect(ConvStore.getPipelineTemplate(t.id)).toBeUndefined()
+  })
+
+  it('createPipelineConversation sets pipelineTemplateId', () => {
+    const t = ConvStore.createPipelineTemplate('Conv test', [
+      { stepOrder: 0, backendId: 'claude', personaId: null },
+      { stepOrder: 1, backendId: 'gemini', personaId: null },
+    ])
+    const conv = ConvStore.createPipelineConversation('Test query', t.id)
+    expect(conv.pipelineTemplateId).toBe(t.id)
+    expect(conv.backend).toBe('pipeline')
+  })
+
+  it('createMessage stores and retrieves stepIndex', () => {
+    const conv = ConvStore.createConversation('Test', 'claude', null)
+    const msg = ConvStore.createMessage({
+      conversationId: conv.id,
+      role: 'assistant',
+      content: 'step result',
+      backend: 'claude',
+      stepIndex: 1,
+    })
+    const msgs = ConvStore.getMessages(conv.id)
+    expect(msgs.find(m => m.id === msg.id)?.stepIndex).toBe(1)
+  })
+})
