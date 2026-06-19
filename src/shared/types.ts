@@ -3,6 +3,7 @@ export interface Conversation {
   title: string
   backend: string
   personaId: string | null
+  pipelineTemplateId: string | null
   createdAt: number
   updatedAt: number
 }
@@ -13,6 +14,7 @@ export interface Message {
   role: 'user' | 'assistant'
   content: string
   backend: string
+  stepIndex: number | null
   createdAt: number
 }
 
@@ -34,6 +36,25 @@ export interface MessageChunk {
   type: 'text' | 'tool_use' | 'error' | 'done'
   content: string
   raw?: unknown
+}
+
+export interface PipelineStep {
+  id: string
+  templateId: string
+  stepOrder: number
+  backendId: string
+  personaId: string | null
+}
+
+export interface PipelineTemplate {
+  id: string
+  name: string
+  steps: PipelineStep[]
+  createdAt: number
+}
+
+export interface PipelineChunk extends MessageChunk {
+  stepIndex: number
 }
 
 export interface BackendAdapter {

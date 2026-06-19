@@ -38,12 +38,12 @@ export function useMessages(conversationId: string | null) {
     const userMsg: Message = {
       id: crypto.randomUUID(),
       conversationId: conversationId ?? '',
-      role: 'user', content: message, backend, createdAt: Date.now(),
+      role: 'user', content: message, backend, stepIndex: null, createdAt: Date.now(),
     }
     const assistantPlaceholder: Message = {
       id: crypto.randomUUID(),
       conversationId: conversationId ?? '',
-      role: 'assistant', content: '', backend, createdAt: Date.now(),
+      role: 'assistant', content: '', backend, stepIndex: null, createdAt: Date.now(),
     }
     setMessages(prev => [...prev, userMsg, assistantPlaceholder])
     const newConvId = await sendChat({ conversationId, message, backend, personaId })

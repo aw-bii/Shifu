@@ -33,7 +33,7 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
       conv = ConvStore.createConversation(message.slice(0, 60), adapter.id, persona?.id ?? null)
     }
 
-    ConvStore.createMessage({ conversationId: conv.id, role: 'user', content: message, backend: adapter.id })
+    ConvStore.createMessage({ conversationId: conv.id, role: 'user', content: message, backend: adapter.id, stepIndex: null })
 
     let fullContent = ''
     for await (const chunk of adapter.send(message, persona?.systemPrompt)) {
@@ -42,7 +42,7 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
       if (chunk.type === 'done') break
     }
 
-    const saved = ConvStore.createMessage({ conversationId: conv.id, role: 'assistant', content: fullContent, backend: adapter.id })
+    const saved = ConvStore.createMessage({ conversationId: conv.id, role: 'assistant', content: fullContent, backend: adapter.id, stepIndex: null })
     event.sender.send(IPC.CHAT_DONE, { conversationId: conv.id, messageId: saved.id })
     return conv.id
   })
