@@ -165,16 +165,21 @@ export function PipelinePanel({ activeTemplateId, onSelect }: Props) {
 
       {editing && (
         <div className="flex flex-col gap-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-          <input
-            className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Template name"
-            value={editing.name}
-            onChange={(e) =>
-              setEditing((prev) =>
-                prev ? { ...prev, name: e.target.value } : null,
-              )
-            }
-          />
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Template name
+            </label>
+            <input
+              className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Draft → Review"
+              value={editing.name}
+              onChange={(e) =>
+                setEditing((prev) =>
+                  prev ? { ...prev, name: e.target.value } : null,
+                )
+              }
+            />
+          </div>
 
           <div className="flex flex-col gap-1">
             {editing.steps.map((step, idx) => (

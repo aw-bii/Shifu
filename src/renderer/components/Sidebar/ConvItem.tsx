@@ -55,15 +55,16 @@ export function ConvItem({
           setEditValue(conversation.title);
           setEditing(true);
         }}
+        aria-current={active ? "page" : undefined}
         className={`flex-1 text-left px-3 py-2 rounded-lg text-sm truncate hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 transition-colors transition-transform duration-100 ease-press active:scale-95 ${
-          active ? "bg-gray-200 dark:bg-gray-700" : ""
+          active ? "bg-gray-200 dark:bg-gray-700 font-medium" : ""
         }`}
       >
         <div className="font-medium truncate flex items-center gap-1">
           {isPipeline && (
             <ArrowsSplit size={12} className="flex-shrink-0 text-blue-500" />
           )}
-          <span className="truncate">{conversation.title}</span>
+          <span className="truncate" title={conversation.title}>{conversation.title}</span>
         </div>
         <div className="text-xs text-gray-400 flex gap-2">
           <span>{isPipeline ? "pipeline" : conversation.backend}</span>

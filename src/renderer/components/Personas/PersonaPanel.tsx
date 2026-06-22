@@ -167,10 +167,10 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
             <div key={v.name} className="flex flex-col gap-1">
               <label
                 htmlFor={`var-${v.name}`}
-                className="text-xs text-gray-500"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 {v.label}
-                {v.required && " *"}
+                {v.required && <span className="text-red-500 ml-0.5">*</span>}
               </label>
               <input
                 id={`var-${v.name}`}
@@ -273,23 +273,33 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
       {/* New/edit persona form */}
       {editing && !creatingFromTemplate && (
         <div className="flex flex-col gap-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-          <input
-            className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Name"
-            value={editing.name ?? ""}
-            onChange={(e) =>
-              setEditing((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-          <textarea
-            className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="System prompt..."
-            rows={3}
-            value={editing.systemPrompt ?? ""}
-            onChange={(e) =>
-              setEditing((prev) => ({ ...prev, systemPrompt: e.target.value }))
-            }
-          />
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Name
+            </label>
+            <input
+              className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Code Reviewer"
+              value={editing.name ?? ""}
+              onChange={(e) =>
+                setEditing((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              System prompt
+            </label>
+            <textarea
+              className="text-sm border rounded-lg px-2 py-1.5 dark:bg-gray-800 dark:border-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="You are a helpful assistant that..."
+              rows={3}
+              value={editing.systemPrompt ?? ""}
+              onChange={(e) =>
+                setEditing((prev) => ({ ...prev, systemPrompt: e.target.value }))
+              }
+            />
+          </div>
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"

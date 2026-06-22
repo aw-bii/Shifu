@@ -67,4 +67,51 @@ describe("ConvItem", () => {
     );
     expect(screen.getByText("claude")).toBeTruthy();
   });
+
+  it("marks active conversation with aria-current", () => {
+    const conv: Conversation = {
+      id: "1",
+      title: "Test conversation",
+      backend: "claude",
+      personaId: null,
+      pipelineTemplateId: null,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    render(
+      <ConvItem
+        conversation={conv}
+        active={true}
+        onClick={() => {}}
+        onDelete={() => {}}
+        onRename={() => {}}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /Test conversation/i })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  it("shows full title in tooltip on truncated span", () => {
+    const conv: Conversation = {
+      id: "1",
+      title: "A very long conversation title that will definitely truncate",
+      backend: "claude",
+      personaId: null,
+      pipelineTemplateId: null,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    render(
+      <ConvItem
+        conversation={conv}
+        active={false}
+        onClick={() => {}}
+        onDelete={() => {}}
+        onRename={() => {}}
+      />,
+    );
+    expect(screen.getByTitle("A very long conversation title that will definitely truncate")).toBeInTheDocument();
+  });
 });
