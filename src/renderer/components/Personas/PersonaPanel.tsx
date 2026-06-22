@@ -263,8 +263,9 @@ export function PersonaPanel({ activePersonaId, onSelect }: Props) {
                 remove(p.id);
               }}
               className="text-xs text-red-400 hoverable:hover:text-red-600 px-1"
+              aria-label={`Delete persona ${p.name}`}
             >
-              Del
+              Delete
             </button>
           </div>
         </div>

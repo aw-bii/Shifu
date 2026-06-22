@@ -155,8 +155,9 @@ export function PipelinePanel({ activeTemplateId, onSelect }: Props) {
                   remove(t.id);
                 }}
                 className="text-xs text-red-400 hoverable:hover:text-red-600 px-1"
+                aria-label={`Delete pipeline ${t.name}`}
               >
-                Del
+                Delete
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, KeyboardEvent, DragEvent, useCallback } from "react";
-import { Paperclip } from "@phosphor-icons/react";
+import { Paperclip, Warning } from "@phosphor-icons/react";
 import { AttachmentChip } from "./AttachmentChip";
 import { useAttachments } from "../../hooks/useAttachments";
 import type { Attachment } from "../../../shared/types";
@@ -89,8 +89,9 @@ export function InputBar({ onSend, onAbort, streaming, disabled }: Props) {
           {errors.map((err, i) => (
             <span
               key={i}
-              className="text-xs px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded"
+              className="text-xs px-2.5 py-1 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-700 rounded-md flex items-center gap-1.5"
             >
+              <Warning size={12} weight="bold" />
               {err}
             </span>
           ))}

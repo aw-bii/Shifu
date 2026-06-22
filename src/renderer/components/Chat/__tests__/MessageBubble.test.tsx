@@ -45,4 +45,11 @@ describe("MessageBubble", () => {
     const { container } = render(<MessageBubble message={userMsg} />);
     expect(container.textContent).toContain("claude");
   });
+
+  it("renders user message timestamp without opacity-50 class", () => {
+    const { container } = render(<MessageBubble message={userMsg} />);
+    const timestampEl = container.querySelector(".text-xs.mt-1");
+    expect(timestampEl).not.toHaveClass("opacity-50");
+    expect(timestampEl).toHaveClass("text-blue-100");
+  });
 });
