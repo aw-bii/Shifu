@@ -5,6 +5,7 @@ import { initDb, getDb } from "./store/db";
 import { registerIpcHandlers } from "./ipc";
 import { initUpdater } from "./updater";
 import { CronEngine } from "./scheduler/cron-engine";
+import { McpClientManager } from "./mcp/mcp-client-manager";
 
 // Must run before app.whenReady() — redirects SQLite to a temp dir so each
 // E2E test run starts with a clean database, and opens CDP port for Playwright
@@ -126,4 +127,8 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
+app.on("will-quit", () => {
+  McpClientManager.shutdownAll();
 });

@@ -13,6 +13,9 @@ import type {
   SecurityRespondPayload,
   CronJob,
   CronJobLog,
+  McpServerConfig,
+  McpTool,
+  McpToolCallResult,
 } from "../shared/types";
 
 // window.ipc is injected by preload/index.ts via contextBridge
@@ -222,4 +225,23 @@ export async function getCronJobLogs(cronJobId: string): Promise<CronJobLog[]> {
 }
 export async function runCronJobNow(id: string): Promise<void> {
   await window.ipc.invoke(IPC.CRON_RUN_NOW, { id });
+}
+
+export async function listMcpServers(): Promise<McpServerConfig[]> {
+  return window.ipc.invoke(IPC.MCP_LIST_SERVERS) as Promise<McpServerConfig[]>;
+}
+export async function addMcpServer(config: { name: string; command: string; args: string[]; env?: Record<string, string> }): Promise<McpServerConfig> {
+  return window.ipc.invoke(IPC.MCP_ADD_SERVER, config) as Promise<McpServerConfig>;
+}
+export async function removeMcpServer(id: string): Promise<void> {
+  await window.ipc.invoke(IPC.MCP_REMOVE_SERVER, { id });
+}
+export async function toggleMcpServer(id: string): Promise<McpServerConfig | undefined> {
+  return window.ipc.invoke(IPC.MCP_TOGGLE_SERVER, { id }) as Promise<McpServerConfig | undefined>;
+}
+export async function listMcpTools(): Promise<McpTool[]> {
+  return window.ipc.invoke(IPC.MCP_LIST_TOOLS) as Promise<McpTool[]>;
+}
+export async function callMcpTool(request: import("../shared/types").McpToolCallRequest): Promise<McpToolCallResult> {
+  return window.ipc.invoke(IPC.MCP_CALL_TOOL, request) as Promise<McpToolCallResult>;
 }

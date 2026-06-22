@@ -9,6 +9,7 @@ import { AttachmentService } from "./attachments/service";
 import { downloadUpdate, quitAndInstall } from "./updater";
 import { CronStore } from "./scheduler/cron-store";
 import { CronEngine } from "./scheduler/cron-engine";
+import { McpClientManager } from "./mcp/mcp-client-manager";
 
 export const MAX_PROMPT_LENGTH = 100_000;
 export const MAX_MESSAGE_LENGTH = 100_000;
@@ -333,4 +334,19 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle(IPC.CRON_RUN_NOW, async (_event, { id }) => {
     await CronEngine.executeJob(id);
   });
+
+  ipcMain.handle(IPC.MCP_LIST_SERVERS, () => McpClientManager.getServers());
+  ipcMain.handle(IPC.MCP_ADD_SERVER, (_event, config) => McpClientManager.addServer(config));
+  ipcMain.handle(IPC.MCP_REMOVE_SERVER, (_event, { id }) => McpClientManager.removeServer(id));
+  ipcMain.handle(IPC.MCP_TOGGLE_SERVER, (_event, { id }) => {
+    const servers = McpClientManager.getServers();
+    const s = servers.find((srv) => srv.id === id);
+    if (s) {
+      s.enabled = !s.enabled;
+      if (!s.enabled) McpClientManager.disconnect(id);
+    }
+    return s;
+  });
+  ipcMain.handle(IPC.MCP_LIST_TOOLS, () => McpClientManager.getTools());
+  ipcMain.handle(IPC.MCP_CALL_TOOL, (_event, request) => McpClientManager.callTool(request));
 }
