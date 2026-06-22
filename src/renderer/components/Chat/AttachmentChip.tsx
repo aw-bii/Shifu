@@ -6,7 +6,7 @@ interface Props {
 
 export function AttachmentChip({ name, attachmentId, onRemove }: Props) {
   return (
-    <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs max-w-[160px]">
+    <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs max-w-[160px] animate-fade-in-up [animation-duration:150ms]">
       <svg
         className="w-3 h-3 flex-shrink-0 text-gray-500"
         viewBox="0 0 16 16"

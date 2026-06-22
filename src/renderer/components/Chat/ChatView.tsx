@@ -58,7 +58,7 @@ function SingleChatView({
   return (
     <div className="flex flex-col h-full">
       {messages.length === 0 && !streaming && (
-        <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+        <div className="flex-1 flex items-center justify-center text-gray-400 text-sm animate-fade-in-up">
           Start a conversation
         </div>
       )}
@@ -124,7 +124,7 @@ function PipelineChatView({
 
       {/* Messages for active tab */}
       {activeMessages.length === 0 && !streaming && (
-        <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+        <div className="flex-1 flex items-center justify-center text-gray-400 text-sm animate-fade-in-up">
           {Object.keys(stepMessages).length === 0
             ? "Start a pipeline run"
             : "No output for this step yet"}
