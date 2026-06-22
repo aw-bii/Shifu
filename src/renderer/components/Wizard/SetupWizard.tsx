@@ -33,13 +33,13 @@ export function SetupWizard({ onComplete }: Props) {
   const missing = statuses.filter((s) => !s.available).map((s) => s.id);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 dark:bg-gray-950">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8">
         <div className="flex gap-1 mb-8">
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className={`h-1 flex-1 rounded-full ${step >= n ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"}`}
+              className={`h-1 flex-1 rounded-full transition-colors duration-300 ease-press ${step >= n ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"}`}
             />
           ))}
         </div>

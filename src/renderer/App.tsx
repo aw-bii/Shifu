@@ -116,7 +116,7 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-[100dvh] bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <Sidebar
         activeId={activeConvId}
         onSelect={(id) => setActiveConvId(id)}
@@ -232,8 +232,10 @@ function App() {
             />
           )}
           <div
-            className={`overflow-hidden border-l border-gray-200 dark:border-gray-700 transition-all duration-200 ease-press ${
-              showPersonas ? "w-72 opacity-100" : "w-0 opacity-0"
+            className={`overflow-hidden transition-[max-width,opacity] duration-200 ease-press ${
+              showPersonas
+                ? "max-w-72 opacity-100 border-l border-gray-200 dark:border-gray-700"
+                : "max-w-0 opacity-0"
             }`}
           >
             <div className="w-72 overflow-y-auto h-full">
@@ -244,8 +246,10 @@ function App() {
             </div>
           </div>
           <div
-            className={`overflow-hidden border-l border-gray-200 dark:border-gray-700 transition-all duration-200 ease-press ${
-              showPipelines ? "w-72 opacity-100" : "w-0 opacity-0"
+            className={`overflow-hidden transition-[max-width,opacity] duration-200 ease-press ${
+              showPipelines
+                ? "max-w-72 opacity-100 border-l border-gray-200 dark:border-gray-700"
+                : "max-w-0 opacity-0"
             }`}
           >
             <div className="w-72 overflow-y-auto h-full">
@@ -259,8 +263,10 @@ function App() {
             </div>
           </div>
           <div
-            className={`overflow-hidden border-l border-gray-200 dark:border-gray-700 transition-all duration-200 ease-press ${
-              showSettings ? "w-72 opacity-100" : "w-0 opacity-0"
+            className={`overflow-hidden transition-[max-width,opacity] duration-200 ease-press ${
+              showSettings
+                ? "max-w-72 opacity-100 border-l border-gray-200 dark:border-gray-700"
+                : "max-w-0 opacity-0"
             }`}
           >
             <SettingsPanel
