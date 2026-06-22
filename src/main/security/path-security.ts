@@ -8,9 +8,8 @@ interface SafePathResult {
 
 const TRAVERSAL_PATTERNS = [
   /\.\.(\/|\\)/,
-  /\.\.[\s\S]/,
   /%2e%2e/i,
-  /%2E%2E/i,
+  /%5c/i,
   /\u2025/,
   /\u2025\u2025/,
   /\.\.\u2215/,
@@ -26,7 +25,7 @@ export const PathSecurity = {
     const normalized = normalizeSlashes(input);
     if (path.isAbsolute(normalized)) return true;
     for (const re of TRAVERSAL_PATTERNS) {
-      if (re.test(input)) return true;
+      if (re.test(normalized)) return true;
     }
     return false;
   },
