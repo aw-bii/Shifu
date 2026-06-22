@@ -49,6 +49,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const { templates } = usePipelines();
   const [searchMode, setSearchMode] = useState(false);
+  const [showCron, setShowCron] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
 
@@ -130,7 +131,7 @@ function App() {
     <div className="flex min-h-[100dvh] bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <Sidebar
         activeId={activeConvId}
-        onSelect={(id) => setActiveConvId(id)}
+        onSelect={(id) => { setActiveConvId(id); setShowCron(false); }}
         onNew={handleNew}
         onDelete={handleDelete}
         onRename={handleRename}
@@ -138,6 +139,8 @@ function App() {
         refreshTrigger={refreshTrigger}
         searchMode={searchMode}
         onCloseSearch={() => setSearchMode(false)}
+        showCron={showCron}
+        onCloseCron={() => setShowCron(false)}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -191,6 +194,12 @@ function App() {
             aria-label="Search"
           >
             <MagnifyingGlass size={16} />
+          </button>
+          <button
+            onClick={() => setShowCron((v) => !v)}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showCron ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+          >
+            Cron
           </button>
           <button
             onClick={() => {
