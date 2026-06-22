@@ -7,6 +7,7 @@ import { PersonaPanel } from "./components/Personas/PersonaPanel";
 import { PipelinePanel } from "./components/Pipelines/PipelinePanel";
 import { SettingsPanel } from "./components/Settings/SettingsPanel";
 import { BackendSwitcher } from "./components/BackendSwitcher";
+import { SecurityDialog } from "./components/SecurityDialog";
 import { usePipelines } from "./hooks/usePipelines";
 import {
   getConversation,
@@ -14,8 +15,10 @@ import {
   deleteConversation,
   renameConversation,
   getSetting,
+  onSecurityEvent,
+  respondSecurity,
 } from "./ipc";
-import type { PipelineTemplate, Conversation } from "../shared/types";
+import type { PipelineTemplate, Conversation, SecurityEvent } from "../shared/types";
 
 function App() {
   const [wizardDone, setWizardDone] = useState(false);
@@ -46,6 +49,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const { templates } = usePipelines();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -110,6 +114,12 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNew]);
+
+  useEffect(() => {
+    return onSecurityEvent((event) => {
+      setSecurityEvents((prev) => [...prev, event]);
+    });
+  }, []);
 
   if (!wizardDone) {
     return <SetupWizard onComplete={() => setWizardDone(true)} />;
@@ -280,6 +290,18 @@ function App() {
           </div>
         </div>
       </div>
+      {securityEvents.length > 0 && (
+        <SecurityDialog
+          event={securityEvents[0]}
+          onRespond={(approved) => {
+            respondSecurity({
+              eventType: securityEvents[0].type,
+              approved,
+            });
+            setSecurityEvents((prev) => prev.slice(1));
+          }}
+        />
+      )}
     </div>
   );
 }
