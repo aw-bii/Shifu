@@ -63,7 +63,7 @@ function SingleChatView({
         </div>
       )}
       {(messages.length > 0 || streaming) && (
-        <MessageList messages={messages} streaming={streaming} />
+        <MessageList messages={messages} streaming={streaming} conversationId={conversationId} />
       )}
       <InputBar onSend={handleSend} onAbort={abort} streaming={streaming} />
     </div>
@@ -134,6 +134,7 @@ function PipelineChatView({
         <MessageList
           messages={activeMessages}
           streaming={streaming && streamingStepIndex === activeTabIndex}
+          conversationId={conversationId}
         />
       )}
 

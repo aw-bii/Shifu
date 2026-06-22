@@ -5,32 +5,47 @@ import type { Message } from "../../../shared/types";
 interface Props {
   messages: Message[];
   streaming: boolean;
+  conversationId: string | null;
 }
 
-export function MessageList({ messages, streaming }: Props) {
+export function MessageList({ messages, streaming, conversationId }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Track which message IDs have been shown. Seeded with all current IDs
+  // whenever conversationId changes so historical messages don't animate.
+  const seenIdsRef = useRef(new Set<string>());
+  const prevConvIdRef = useRef<string | null | undefined>(undefined);
+
+  if (prevConvIdRef.current !== conversationId) {
+    prevConvIdRef.current = conversationId;
+    messages.forEach((m) => seenIdsRef.current.add(m.id));
+  }
+
+  // Register rendered IDs after each paint so future renders know what's old.
+  useEffect(() => {
+    messages.forEach((m) => seenIdsRef.current.add(m.id));
+  }, [messages]);
+
+  // Only scroll when a genuinely new message appears (not on every chunk).
+  const lastMsgId = messages.at(-1)?.id;
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [lastMsgId]);
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-4">
-      {messages.map((msg, i) => (
-        <div
-          key={msg.id}
-          className="animate-fade-in-up"
-          style={{ animationDelay: `${Math.min(i * 30, 500)}ms` }}
-        >
-          <MessageBubble message={msg} />
-        </div>
-      ))}
+      {messages.map((msg) => {
+        const isNew = !seenIdsRef.current.has(msg.id);
+        return (
+          <div key={msg.id} className={isNew ? "animate-fade-in-up" : undefined}>
+            <MessageBubble message={msg} />
+          </div>
+        );
+      })}
       {streaming && (
         <div className="flex justify-start mb-3">
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2">
-            <span className="animate-pulse text-sm text-gray-500">
-              thinking...
-            </span>
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-3 flex items-center gap-1">
+            <span className="animate-pulse text-sm text-gray-500">thinking...</span>
           </div>
         </div>
       )}
