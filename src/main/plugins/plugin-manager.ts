@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, existsSync } from "fs";
+import { readdirSync, readFileSync, existsSync, realpathSync } from "fs";
 import { spawn } from "child_process";
 import path from "path";
 import type { PluginInfo, PluginHook, PluginEvent } from "../../shared/types";
@@ -36,9 +36,23 @@ export const PluginManager = {
 
     if (!existsSync(pluginDir)) return;
 
+    const realPluginDir = realpathSync(pluginDir);
     const entries = readdirSync(pluginDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
+      // Resolve symlinks — reject entries that escape pluginDir
+      let realEntryPath: string;
+      try {
+        realEntryPath = realpathSync(path.join(pluginDir, entry.name));
+      } catch {
+        continue; // broken symlink — skip
+      }
+      if (
+        realEntryPath !== realPluginDir &&
+        !realEntryPath.startsWith(realPluginDir + path.sep)
+      ) {
+        continue; // symlink escape — skip
+      }
       const jsonPath = path.join(pluginDir, entry.name, "plugin.json");
       if (!existsSync(jsonPath)) continue;
 
@@ -132,7 +146,24 @@ export const PluginManager = {
 
   runPlugin(plugin: PluginInstance, event: PluginEvent): Promise<unknown> {
     return new Promise((resolve, reject) => {
-      const proc = spawn(plugin.descriptor.command, plugin.descriptor.args, {
+      const cmd = plugin.descriptor.command;
+      const hasSeparator = cmd.includes("/") || cmd.includes("\\");
+      let spawnCommand = cmd;
+      if (hasSeparator) {
+        const resolvedCommand = path.resolve(plugin.dir, cmd);
+        if (
+          resolvedCommand !== plugin.dir &&
+          !resolvedCommand.startsWith(plugin.dir + path.sep)
+        ) {
+          return reject(
+            new Error(
+              `Plugin command "${cmd}" escapes plugin directory`,
+            ),
+          );
+        }
+        spawnCommand = resolvedCommand;
+      }
+      const proc = spawn(spawnCommand, plugin.descriptor.args, {
         cwd: plugin.dir,
         stdio: ["pipe", "pipe", "pipe"],
         timeout: 10000,

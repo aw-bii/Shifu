@@ -82,4 +82,33 @@ rl.on("line", (line) => {
     expect(result.length).toBeGreaterThan(0);
     expect(result[0].success).toBe(true);
   });
+
+  it("rejects plugin with command that escapes plugin directory", async () => {
+    const escapeDir = path.join(pluginDir, "escape-plugin");
+    fs.mkdirSync(escapeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(escapeDir, "plugin.json"),
+      JSON.stringify({
+        name: "Escape Plugin",
+        command: "../../evil.sh",
+        args: [],
+        hooks: ["beforePrompt"],
+        version: "1.0.0",
+      }),
+    );
+    await PluginManager.discover(pluginDir);
+    const result = await PluginManager.executeHook("beforePrompt", {
+      hook: "beforePrompt",
+      conversationId: "test-escape",
+      messageContent: "test",
+    });
+    // The escape plugin should either be skipped at discover time OR fail at execute time
+    const escapeResult = result.find((r) => r.pluginId === "escape-plugin");
+    if (escapeResult) {
+      expect(escapeResult.success).toBe(false);
+      expect(escapeResult.error).toContain("escapes plugin directory");
+    }
+    // Cleanup
+    fs.rmSync(escapeDir, { recursive: true, force: true });
+  });
 });
