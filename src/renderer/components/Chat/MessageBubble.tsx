@@ -4,6 +4,18 @@ import { AttachmentRow } from "./AttachmentRow";
 import { listAttachments } from "../../ipc";
 import type { Message, Attachment } from "../../../shared/types";
 
+function safeUrl(url: string): string | null {
+  try {
+    const { protocol } = new URL(url);
+    if (protocol === "https:" || protocol === "http:" || protocol === "mailto:") {
+      return url;
+    }
+  } catch {
+    if (!url.startsWith("javascript:") && !url.startsWith("data:")) return url;
+  }
+  return null;
+}
+
 interface Props {
   message: Message;
 }
@@ -32,7 +44,7 @@ export function MessageBubble({ message }: Props) {
           <p className="whitespace-pre-wrap">{message.content}</p>
         ) : (
           <div className="prose prose-sm dark:prose-invert max-w-none">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+            <ReactMarkdown urlTransform={safeUrl}>{message.content}</ReactMarkdown>
           </div>
         )}
         {attachments.length > 0 && <AttachmentRow attachments={attachments} />}
