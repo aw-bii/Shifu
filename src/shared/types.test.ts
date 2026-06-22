@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { SecurityEvent, WriteApprovalRequest } from "./types";
+import type { SecurityEvent, WriteApprovalRequest, SecurityRespondPayload } from "./types";
 
 describe("SecurityEvent types", () => {
   it("SecurityEvent discriminates on type", () => {
@@ -28,5 +28,14 @@ describe("SecurityEvent types", () => {
       content: "hello",
     };
     expect(req.filePath).toBe("/tmp/test.txt");
+  });
+
+  it("SecurityRespondPayload carries event type and approval", () => {
+    const payload: SecurityRespondPayload = {
+      eventType: "write_approval_needed",
+      approved: true,
+    };
+    expect(payload.eventType).toBe("write_approval_needed");
+    expect(payload.approved).toBe(true);
   });
 });
