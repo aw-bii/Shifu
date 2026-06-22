@@ -25,7 +25,7 @@ export function validatePersona(p: {
   }
 }
 
-export function registerIpcHandlers(_win: BrowserWindow): void {
+export function registerIpcHandlers(win: BrowserWindow): void {
   // chat:send — starts streaming, pushes chat:chunk and chat:done via webContents
   ipcMain.handle(
     IPC.CHAT_SEND,
@@ -79,13 +79,14 @@ export function registerIpcHandlers(_win: BrowserWindow): void {
         : [];
 
       let fullContent = "";
-      const win = BrowserWindow.fromWebContents(event.sender);
       const wrapped = securityMiddleware(
         adapter.send(message, persona?.systemPrompt, attachments),
         adapter.id,
         (evt) => {
           if (win) {
             win.webContents.send(IPC.SECURITY_EVENT, evt);
+          } else {
+            console.warn("security:event dropped (no window)", evt.type);
           }
         },
       );
