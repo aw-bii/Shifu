@@ -1,4 +1,4 @@
-# Shifu Completion — Design Spec
+# researcher Completion — Design Spec
 
 **Date:** 2026-06-19
 **Status:** Approved
@@ -9,7 +9,7 @@
 
 Three pending gaps remain before the BII Agent Harness project is fully ship-ready:
 
-1. **GitHub repo + publisher config** — Create `aw-bii/Shifu`, push the codebase, and fix the placeholder `owner`/`repo` values in `electron-builder.config.ts`.
+1. **GitHub repo + publisher config** — Create `aw-bii/researcher`, push the codebase, and fix the placeholder `owner`/`repo` values in `electron-builder.config.ts`.
 2. **E2E tests (full flow)** — Replace the placeholder Playwright tests with real Electron E2E coverage: wizard, chat, persona, and conversation history flows. A `TestAdapter` echoes input so tests run without a real CLI in CI.
 3. **`install.ts` unit test** — Restore `src/main/wizard/install.test.ts` (deleted during security hardening) with four cases covering success, unknown backend, permission errors, and generic failures.
 
@@ -19,7 +19,7 @@ Three pending gaps remain before the BII Agent Harness project is fully ship-rea
 
 ### Actions
 
-- Create `aw-bii/Shifu` as a public GitHub repo via `gh repo create`.
+- Create `aw-bii/researcher` as a public GitHub repo via `gh repo create`.
 - Push the existing `master` branch.
 - In `electron-builder.config.ts`, change:
   ```ts
@@ -29,7 +29,7 @@ Three pending gaps remain before the BII Agent Harness project is fully ship-rea
   to:
   ```ts
   owner: "aw-bii",
-  repo: "Shifu",
+  repo: "researcher",
   ```
 - In `.github/workflows/ci.yml`, update the `on.push.branches` and `on.pull_request.branches` triggers to include `master` (current branch) alongside `main`.
 
@@ -132,6 +132,6 @@ Regression guard: assert `spawn` is called without `{ shell: true }` (verifies t
 
 ## Out of Scope
 
-- Changing the app name/branding from "BII Agent Harness" to "Shifu" — the repo is named Shifu but the app identity is unchanged.
+- Changing the app name/branding from "BII Agent Harness" to "researcher" — the repo is named researcher but the app identity is unchanged.
 - Additional E2E flows (pipeline mode, attachments) — deferred; the four flows above cover the core value prop.
 - macOS `.icns` generation in CI — electron-builder handles this on macOS runners; no code change needed.

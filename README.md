@@ -2,7 +2,7 @@
 
 <img src="resources/icon.png" alt="BII Agent Harness" width="96" />
 
-# Shifu
+# researcher
 
 **A native desktop chat app that brings Claude Code, Gemini CLI, and Opencode behind one clean UI.**
 

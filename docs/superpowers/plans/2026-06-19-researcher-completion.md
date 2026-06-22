@@ -1,8 +1,8 @@
-# Shifu Completion Implementation Plan
+# researcher Completion Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Close the three remaining gaps: create the `aw-bii/Shifu` GitHub repo and fix publisher config, add a `TestAdapter` and real Playwright E2E tests covering wizard/chat/persona/history flows, and restore the `install.ts` unit test.
+**Goal:** Close the three remaining gaps: create the `aw-bii/researcher` GitHub repo and fix publisher config, add a `TestAdapter` and real Playwright E2E tests covering wizard/chat/persona/history flows, and restore the `install.ts` unit test.
 
 **Architecture:** Task 1 is pure config/git — no source changes. Task 2 adds one new source file (`test.adapter.ts`), two small edits to existing source files (`manager.ts`, `index.ts`), and three new test infrastructure files. Task 3 restores a single deleted test file. All three tasks are independent and can be done in any order.
 
@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Repo name on GitHub: `Shifu` (capital S), owner: `aw-bii`
+- Repo name on GitHub: `researcher` (capital S), owner: `aw-bii`
 - `electron-builder.config.ts` `owner`/`repo` values must match exactly
 - `E2E_TEST=1` env var must be the sole gate for test-only behaviour — no other mechanism
 - E2E tests run against compiled output (`out/main/index.js`) — always run `npm run build` before `npm run test:e2e`
@@ -50,21 +50,21 @@ Delete:
 - Shell: `gh repo create`, `git remote add`, `git push`
 
 **Interfaces:**
-- Produces: live GitHub repo at `https://github.com/aw-bii/Shifu` with all commits; CI workflow triggers on `master`
+- Produces: live GitHub repo at `https://github.com/aw-bii/researcher` with all commits; CI workflow triggers on `master`
 
 - [ ] **Step 1: Create the GitHub repo**
 
 Run:
 ```bash
-gh repo create aw-bii/Shifu --public --description "BII Agent Harness — desktop AI chat app"
+gh repo create aw-bii/researcher --public --description "BII Agent Harness — desktop AI chat app"
 ```
-Expected: `✓ Created repository aw-bii/Shifu on GitHub`
+Expected: `✓ Created repository aw-bii/researcher on GitHub`
 
 - [ ] **Step 2: Add remote and push**
 
 Run:
 ```bash
-git remote add origin https://github.com/aw-bii/Shifu.git
+git remote add origin https://github.com/aw-bii/researcher.git
 git push -u origin master
 ```
 Expected: branch `master` pushed, tracking set.
@@ -85,7 +85,7 @@ to:
   publish: {
     provider: "github",
     owner: "aw-bii",
-    repo: "Shifu",
+    repo: "researcher",
     releaseType: "release",
   },
 ```
@@ -113,10 +113,10 @@ on:
 
 ```bash
 git add electron-builder.config.ts .github/workflows/ci.yml
-git commit -m "fix: point publisher config at aw-bii/Shifu, add master to CI triggers"
+git commit -m "fix: point publisher config at aw-bii/researcher, add master to CI triggers"
 git push
 ```
-Expected: push succeeds; visit `https://github.com/aw-bii/Shifu/actions` and verify CI workflow appears (may be queued or running).
+Expected: push succeeds; visit `https://github.com/aw-bii/researcher/actions` and verify CI workflow appears (may be queued or running).
 
 ---
 
@@ -555,7 +555,7 @@ git push
 **1. Spec coverage:**
 | Spec requirement | Task | Status |
 |---|---|---|
-| Create `aw-bii/Shifu` public repo | Task 1 Step 1–2 | ✓ |
+| Create `aw-bii/researcher` public repo | Task 1 Step 1–2 | ✓ |
 | Fix `electron-builder.config.ts` owner/repo | Task 1 Step 3 | ✓ |
 | Update CI triggers for master | Task 1 Step 4 | ✓ |
 | `TestAdapter` echoes input with 50ms delay | Task 2 Step 2 | ✓ |

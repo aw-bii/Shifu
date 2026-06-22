@@ -16,7 +16,7 @@ export default {
   publish: {
     provider: "github",
     owner: "aw-bii",
-    repo: "Shifu",
+    repo: "researcher",
     releaseType: "release",
   },
 } satisfies Configuration;
