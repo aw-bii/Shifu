@@ -95,7 +95,7 @@ export const AttachmentService = {
       const destDir = path.join(userDataPath, "attachments", messageId);
       fs.mkdirSync(destDir, { recursive: true });
 
-      const originalName = path.basename(filePath);
+      const originalName = path.basename(filePath).replace(/[\x00/\\]/g, "_");
       const storedPath = path.join(destDir, originalName);
       fs.copyFileSync(filePath, storedPath);
 
