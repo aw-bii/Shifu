@@ -18,7 +18,11 @@ import {
   onSecurityEvent,
   respondSecurity,
 } from "./ipc";
-import type { PipelineTemplate, Conversation, SecurityEvent } from "../shared/types";
+import type {
+  PipelineTemplate,
+  Conversation,
+  SecurityEvent,
+} from "../shared/types";
 
 function App() {
   const [wizardDone, setWizardDone] = useState(false);
@@ -50,6 +54,8 @@ function App() {
   const { templates } = usePipelines();
   const [searchMode, setSearchMode] = useState(false);
   const [showCron, setShowCron] = useState(false);
+  const [showMCP, setShowMCP] = useState(false);
+  const [showPlugins, setShowPlugins] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
 
@@ -131,7 +137,12 @@ function App() {
     <div className="flex min-h-[100dvh] bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <Sidebar
         activeId={activeConvId}
-        onSelect={(id) => { setActiveConvId(id); setShowCron(false); }}
+        onSelect={(id) => {
+          setActiveConvId(id);
+          setShowCron(false);
+          setShowMCP(false);
+          setShowPlugins(false);
+        }}
         onNew={handleNew}
         onDelete={handleDelete}
         onRename={handleRename}
@@ -141,6 +152,10 @@ function App() {
         onCloseSearch={() => setSearchMode(false)}
         showCron={showCron}
         onCloseCron={() => setShowCron(false)}
+        showMCP={showMCP}
+        onCloseMCP={() => setShowMCP(false)}
+        showPlugins={showPlugins}
+        onClosePlugins={() => setShowPlugins(false)}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -202,6 +217,18 @@ function App() {
             Cron
           </button>
           <button
+            onClick={() => setShowMCP((v) => !v)}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showMCP ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+          >
+            MCP
+          </button>
+          <button
+            onClick={() => setShowPlugins((v) => !v)}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPlugins ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+          >
+            Plugins
+          </button>
+          <button
             onClick={() => {
               setShowPersonas((v) => !v);
               setShowPipelines(false);
@@ -232,7 +259,10 @@ function App() {
           {!activeConvId && mode === "single" ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
               <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
-                <ChatCircle size={32} className="text-blue-600 dark:text-blue-300" />
+                <ChatCircle
+                  size={32}
+                  className="text-blue-600 dark:text-blue-300"
+                />
               </div>
               <h2 className="text-lg font-semibold mb-2">
                 Welcome to BII Agent Harness
