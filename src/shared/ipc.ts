@@ -53,6 +53,11 @@ export const IPC = {
   MCP_TOGGLE_SERVER: "mcp:toggle-server",
   MCP_LIST_TOOLS: "mcp:list-tools",
   MCP_CALL_TOOL: "mcp:call-tool",
+
+  PLUGIN_LIST: "plugin:list",
+  PLUGIN_TOGGLE: "plugin:toggle",
+  PLUGIN_RELOAD: "plugin:reload",
+  PLUGIN_GET_EVENTS: "plugin:get-events",
 } as const;
 
 export type IpcChannels = typeof IPC;
@@ -125,6 +130,11 @@ export interface IpcInvokeMap {
   [IPC.MCP_TOGGLE_SERVER]: { id: string };
   [IPC.MCP_LIST_TOOLS]: void;
   [IPC.MCP_CALL_TOOL]: import("./types").McpToolCallRequest;
+
+  [IPC.PLUGIN_LIST]: void;
+  [IPC.PLUGIN_TOGGLE]: { id: string };
+  [IPC.PLUGIN_RELOAD]: void;
+  [IPC.PLUGIN_GET_EVENTS]: { conversationId?: string };
 }
 
 export interface IpcPushMap {

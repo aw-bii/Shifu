@@ -176,3 +176,25 @@ export interface McpToolCallResult {
   content: string;
   error?: string;
 }
+
+export type PluginHook = "beforePrompt" | "afterResponse" | "onConversationStart" | "onConversationEnd" | "onError";
+
+export interface PluginInfo {
+  id: string;
+  name: string;
+  path: string;
+  command: string;
+  enabled: boolean;
+  hooks: PluginHook[];
+  version: string;
+  lastLoadedAt: number | null;
+  lastError: string | null;
+}
+
+export interface PluginEvent {
+  hook: PluginHook;
+  conversationId?: string;
+  messageContent?: string;
+  responseContent?: string;
+  error?: string;
+}
