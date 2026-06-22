@@ -27,7 +27,7 @@ async function main() {
     console.log(`Claude binary bundled to: ${dest}`)
   } catch {
     console.log('Claude not found globally, installing to temp...')
-    const tmpDir = join(resourcesDir, '..', '.claude-tmp')
+    const tmpDir = join(resourcesDir, '..', 'claude-tmp')
     ensureDir(tmpDir)
     execSync(`npm init -y`, { cwd: tmpDir, stdio: 'pipe' })
     execSync(`npm install @anthropic-ai/claude-code`, { cwd: tmpDir, stdio: 'pipe' })
