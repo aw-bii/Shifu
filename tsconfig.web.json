@@ -2,12 +2,12 @@
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
     "src/renderer/**/*",
-    "src/shared/**/*",
-    "src/test-setup.ts"
+    "src/shared/**/*"
   ],
   "compilerOptions": {
     "composite": true,
     "outDir": "out/renderer",
-    "rootDir": "."
+    "rootDir": ".",
+    "types": ["@testing-library/jest-dom"]
   }
 }
