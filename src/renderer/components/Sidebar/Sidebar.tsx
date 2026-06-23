@@ -34,11 +34,8 @@ export function Sidebar({
   searchMode,
   onCloseSearch,
   showCron,
-  _onCloseCron,
   showMCP,
-  _onCloseMCP,
   showPlugins,
-  _onClosePlugins,
 }: Props) {
   return (
     <div className="w-64 flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">

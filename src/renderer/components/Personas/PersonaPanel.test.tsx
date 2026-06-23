@@ -41,12 +41,6 @@ describe("PersonaPanel delete confirmation", () => {
   });
 
   it("calls remove only on the Confirm? click, not on the first Delete click", () => {
-    vi.mocked(
-      vi.importActual("../../hooks/usePersonas") as {
-        usePersonas: () => unknown;
-      },
-    );
-    // Re-render with a spy on remove by using the mocked hook
     render(<PersonaPanel activePersonaId={null} onSelect={vi.fn()} />);
     fireEvent.click(
       screen.getByRole("button", {
