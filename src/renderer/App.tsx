@@ -162,8 +162,8 @@ function App() {
       <div className="flex flex-col flex-1 min-w-0">
         <UpdateBanner />
         {/* Toolbar */}
-        <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
-          {/* Mode toggle */}
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+          {/* Zone 1: Mode + Backend */}
           <div className="flex rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden text-xs">
             <button
               onClick={() => {
@@ -205,37 +205,51 @@ function App() {
             </select>
           )}
 
+          {/* Divider */}
+          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+
+          {/* Zone 2: Sidebar tools */}
           <button
             onClick={() => setSearchMode((v) => !v)}
+            title="Search conversations (Ctrl+F)"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${searchMode ? "bg-blue-100 dark:bg-blue-900" : ""}`}
-            aria-label="Search"
+            aria-label="Search conversations"
           >
             <MagnifyingGlass size={16} />
           </button>
           <button
             onClick={() => setShowCron((v) => !v)}
+            title="Scheduled tasks"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showCron ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Cron
           </button>
           <button
             onClick={() => setShowMCP((v) => !v)}
+            title="Model Context Protocol servers"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showMCP ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             MCP
           </button>
           <button
             onClick={() => setShowPlugins((v) => !v)}
+            title="Installed plugins"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPlugins ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Plugins
           </button>
+
+          {/* Spacer + Divider */}
+          <div className="flex-1" />
+          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+
+          {/* Zone 3: Right panels */}
           <button
             onClick={() => {
               setShowPersonas((v) => !v);
               setShowPipelines(false);
             }}
-            className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ml-auto"
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPersonas ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Personas
           </button>
@@ -244,12 +258,13 @@ function App() {
               setShowPipelines((v) => !v);
               setShowPersonas(false);
             }}
-            className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPipelines ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Pipelines
           </button>
           <button
             onClick={() => setShowSettings((v) => !v)}
+            title="Settings"
             className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"
             aria-label="Settings"
           >
