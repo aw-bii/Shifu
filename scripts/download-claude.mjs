@@ -36,8 +36,8 @@ async function main() {
       copyFileSync(nodeModulesBin, join(resourcesDir, BINARY_NAME))
       console.log(`Claude binary downloaded and bundled to: ${resourcesDir}`)
     } else {
-      console.error('Could not find downloaded Claude binary')
-      process.exit(1)
+      console.warn('Could not find downloaded Claude binary — skipping. Run this script manually before packaging.')
+      process.exit(0)
     }
     // Cleanup
     rmSync(tmpDir, { recursive: true, force: true })
