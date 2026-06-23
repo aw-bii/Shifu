@@ -6,9 +6,9 @@ import { test, expect } from "./fixtures";
 
 test("wizard flow — complete all 3 steps", async ({ window }) => {
   // Step 1: wizard is visible and backend detection runs
-  await expect(window.getByText("Detecting AI backends")).toBeVisible({
-    timeout: 10_000,
-  });
+  await expect(
+    window.getByRole("heading", { name: "Setting up your tools" }),
+  ).toBeVisible({ timeout: 10_000 });
 
   // Wait for probe to finish (Next button becomes enabled)
   const nextBtn = window.getByRole("button", { name: "Next" });
@@ -22,7 +22,7 @@ test("wizard flow — complete all 3 steps", async ({ window }) => {
 
   // Step 3: auth check — all available backends authenticated
   await expect(
-    window.getByText("All available backends are authenticated"),
+    window.getByText("All tools are signed in"),
   ).toBeVisible({ timeout: 5_000 });
 
   await window.getByRole("button", { name: "Finish Setup" }).click();
@@ -108,12 +108,13 @@ test("persona flow — create a persona and assign it", async ({ window }) => {
   await window
     .locator(".w-72")
     .getByRole("button", { name: "+ New", exact: true })
+    .first()
     .click();
 
   // Fill in name and system prompt
-  await window.getByPlaceholder("Name").fill("E2E Persona");
+  await window.getByPlaceholder("e.g. Code Reviewer").fill("E2E Persona");
   await window
-    .getByPlaceholder("System prompt...")
+    .getByPlaceholder("You are a helpful assistant that...")
     .fill("You are a test assistant.");
 
   // Save

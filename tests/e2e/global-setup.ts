@@ -3,6 +3,13 @@ import path from "path";
 import fs from "fs";
 import os from "os";
 
+const SQLITE3_BUILD = path.join(
+  __dirname,
+  "../../node_modules/better-sqlite3/build",
+);
+const RELEASE_BINARY = path.join(SQLITE3_BUILD, "Release/better_sqlite3.node");
+const ELECTRON_BINARY = path.join(SQLITE3_BUILD, "electron_better_sqlite3.node");
+
 const PROJECT_ROOT = path.join(__dirname, "..", "..");
 
 function getElectronPath(): string {
@@ -42,6 +49,17 @@ async function waitForCDP(
 }
 
 export default async function globalSetup() {
+  // Swap in the Electron-compiled binary (NMV 130) — the Node 24 binary can't
+  // be loaded by Electron's embedded Node. global-teardown.ts restores it.
+  if (fs.existsSync(ELECTRON_BINARY)) {
+    fs.copyFileSync(ELECTRON_BINARY, RELEASE_BINARY);
+  } else {
+    throw new Error(
+      "Electron binary not found at " + ELECTRON_BINARY +
+      "\nRun: npm run rebuild:electron"
+    );
+  }
+
   // Clean up specific files from a previous E2E run so the wizard always shows:
   // - conversations.db: SQLite state
   // - Local Storage: contains wizardDone flag set by app

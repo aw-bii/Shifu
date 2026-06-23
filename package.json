@@ -14,8 +14,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test --config tests/e2e/electron.config.ts",
+    "test:e2e": "npm run build && playwright test --config tests/e2e/electron.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json",
+    "rebuild:electron": "cd node_modules/better-sqlite3 && node-gyp rebuild --target=33.4.11 --runtime=electron --dist-url=https://electronjs.org/headers/ --arch=x64 --release && cd ../.. && cp node_modules/better-sqlite3/build/Release/better_sqlite3.node node_modules/better-sqlite3/build/electron_better_sqlite3.node && npm rebuild better-sqlite3 && cp node_modules/better-sqlite3/build/Release/better_sqlite3.node node_modules/better-sqlite3/build/node_better_sqlite3.node",
     "postinstall": "node scripts/download-claude.mjs"
   },
   "dependencies": {
@@ -23,18 +24,19 @@
     "better-sqlite3": "^12.11.1",
     "chokidar": "^5.0.0",
     "electron-updater": "^6.8.9",
+    "exceljs": "^4.4.0",
     "mammoth": "^1.12.0",
     "node-cron": "^4.5.0",
     "pdf-parse": "^2.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-markdown": "^10.1.0",
-    "xlsx": "^0.18.5"
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@electron/rebuild": "^4.0.4",
     "@playwright/test": "^1.61.0",
     "@tailwindcss/typography": "^0.5.20",
     "@testing-library/jest-dom": "^6.9.1",

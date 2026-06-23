@@ -63,12 +63,19 @@ async function extractText(
       mimeType ===
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
-      const XLSX = await import("xlsx");
-      const wb = XLSX.readFile(filePath);
-      const text = wb.SheetNames.map((name: string) => {
-        const sheet = wb.Sheets[name];
-        return XLSX.utils.sheet_to_csv(sheet);
-      }).join("\n\n");
+      const ExcelJS = (await import("exceljs")).default;
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filePath);
+      const text = workbook.worksheets
+        .map((ws) => {
+          const rows: string[] = [];
+          ws.eachRow((row) => {
+            const values = (row.values as (ExcelJS.CellValue | undefined)[]).slice(1);
+            rows.push(values.map((v) => (v == null ? "" : String(v))).join(","));
+          });
+          return rows.join("\n");
+        })
+        .join("\n\n");
       return { text, error: false };
     }
     return { text: null, error: false };

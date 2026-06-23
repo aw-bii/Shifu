@@ -152,11 +152,8 @@ function App() {
         searchMode={searchMode}
         onCloseSearch={() => setSearchMode(false)}
         showCron={showCron}
-        onCloseCron={() => setShowCron(false)}
         showMCP={showMCP}
-        onCloseMCP={() => setShowMCP(false)}
         showPlugins={showPlugins}
-        onClosePlugins={() => setShowPlugins(false)}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
