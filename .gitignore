@@ -7,6 +7,9 @@ test-results
 *.d.ts.map
 coverage
 
+# Bundled binaries — never commit, install via terminal
+resources/claude-bin/
+
 # Environment files
 .env
 .env.*
