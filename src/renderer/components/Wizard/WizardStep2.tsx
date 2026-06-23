@@ -16,13 +16,18 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
   const [logs, setLogs] = useState<Record<string, string[]>>({});
   const [installing, setInstalling] = useState<Record<string, boolean>>({});
   const [done, setDone] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const install = async (id: string) => {
+    setErrors((prev) => {
+      const n = { ...prev };
+      delete n[id];
+      return n;
+    });
     setInstalling((prev) => ({ ...prev, [id]: true }));
     const addLine = (line: string) =>
       setLogs((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), line] }));
 
-    // listen for install output lines
     const off = window.ipc.on("wizard:install:line", (line: unknown) =>
       addLine(String(line)),
     );
@@ -31,6 +36,12 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
 
     setInstalling((prev) => ({ ...prev, [id]: false }));
     setDone((prev) => ({ ...prev, [id]: ok }));
+    if (!ok) {
+      setErrors((prev) => ({
+        ...prev,
+        [id]: "Installation failed. Check your internet connection.",
+      }));
+    }
   };
 
   if (missing.length === 0) {
@@ -79,7 +90,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
               className="btn-sm bg-blue-600 text-white hoverable:hover:bg-blue-700 disabled:opacity-50"
             >
               {done[id]
-                ? "Installed ✓"
+                ? "Installed"
                 : installing[id]
                   ? "Installing..."
                   : "Install"}
@@ -90,6 +101,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
               {logs[id].join("\n")}
             </pre>
           )}
+          {errors[id] && <p className="text-xs text-red-500">{errors[id]}</p>}
         </div>
       ))}
       <button

@@ -29,8 +29,16 @@ interface Props {
 
 export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
   const [statuses, setStatuses] = useState(initial);
+  const [recheckFailed, setRecheckFailed] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const recheck = async (id: string) => {
+    setRecheckFailed((prev) => {
+      const n = { ...prev };
+      delete n[id];
+      return n;
+    });
     setStatuses((prev) =>
       prev.map((s) => (s.id === id ? { ...s, loading: true } : s)),
     );
@@ -38,6 +46,9 @@ export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
     setStatuses((prev) =>
       prev.map((s) => (s.id === id ? { ...s, ...result, loading: false } : s)),
     );
+    if (!result.authenticated) {
+      setRecheckFailed((prev) => ({ ...prev, [id]: true }));
+    }
   };
 
   const needsAuth = statuses.filter((s) => s.available && !s.authenticated);
@@ -52,7 +63,11 @@ export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
       </div>
       {needsAuth.length === 0 && (
         <div className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-          <CheckCircle size={16} weight="fill" className="text-blue-600 flex-shrink-0" />
+          <CheckCircle
+            size={16}
+            weight="fill"
+            className="text-blue-600 flex-shrink-0"
+          />
           All tools are signed in
         </div>
       )}
@@ -74,6 +89,11 @@ export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
           >
             {s.loading ? "Checking..." : "Check"}
           </button>
+          {recheckFailed[s.id] && (
+            <p className="text-xs text-red-500">
+              Could not verify. Run the command again and click Check.
+            </p>
+          )}
         </div>
       ))}
       {needsAuth.length > 0 && (
