@@ -103,6 +103,7 @@ export interface SecurityEvent {
   source: string;
   filePath?: string;
   content?: string;
+  id?: string;
 }
 
 export interface WriteApprovalRequest {
@@ -111,7 +112,7 @@ export interface WriteApprovalRequest {
 }
 
 export interface SecurityRespondPayload {
-  eventType: SecurityEvent["type"];
+  id: string;
   approved: boolean;
 }
 

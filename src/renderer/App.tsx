@@ -352,7 +352,7 @@ function App() {
           event={securityEvents[0]}
           onRespond={(approved) => {
             respondSecurity({
-              eventType: securityEvents[0].type,
+              id: securityEvents[0].id!,
               approved,
             });
             setSecurityEvents((prev) => prev.slice(1));
