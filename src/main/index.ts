@@ -63,7 +63,7 @@ function createWindow(): BrowserWindow {
       preload: path.join(__dirname, "../preload/index.js"),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true,
+      sandbox: false,
     },
   });
 
@@ -106,7 +106,7 @@ function createWindow(): BrowserWindow {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "font-src 'self' data:",
-      `connect-src ${connectSrc}`,
+      `connect-src ${connectSrc} https: wss:`,
       "frame-src 'none'",
       "object-src 'none'",
       "base-uri 'self'",

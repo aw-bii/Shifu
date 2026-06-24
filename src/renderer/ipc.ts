@@ -30,10 +30,21 @@ declare global {
   }
 }
 
+export let lastIpcError: Error | null = null;
+export function clearIpcError() { lastIpcError = null; }
+
+function ipcInvoke<T>(channel: string, ...args: unknown[]): Promise<T> {
+  return window.ipc.invoke(channel, ...args).catch((err: Error) => {
+    lastIpcError = err;
+    console.error(`IPC ${channel} failed:`, err);
+    throw err;
+  }) as Promise<T>;
+}
+
 export async function sendChat(
   payload: IpcInvokeMap[typeof IPC.CHAT_SEND],
 ): Promise<string> {
-  return window.ipc.invoke(IPC.CHAT_SEND, payload) as Promise<string>;
+  return ipcInvoke<string>(IPC.CHAT_SEND, payload);
 }
 export function onChatChunk(
   cb: (chunk: MessageChunk & { conversationId: string }) => void,
@@ -46,61 +57,57 @@ export function onChatDone(
   return window.ipc.on(IPC.CHAT_DONE, cb as any);
 }
 export async function abortChat(conversationId: string): Promise<void> {
-  await window.ipc.invoke(IPC.CHAT_ABORT, { conversationId });
+  await ipcInvoke<void>(IPC.CHAT_ABORT, { conversationId });
 }
 export async function listConversations(
   limit = 50,
   offset = 0,
 ): Promise<Conversation[]> {
-  return window.ipc.invoke(IPC.CONV_LIST, { limit, offset }) as Promise<
-    Conversation[]
-  >;
+  return ipcInvoke<Conversation[]>(IPC.CONV_LIST, { limit, offset });
 }
 export async function getConversation(
   conversationId: string,
 ): Promise<{ conversation: Conversation; messages: Message[] }> {
-  return window.ipc.invoke(IPC.CONV_GET, { conversationId }) as Promise<any>;
+  return ipcInvoke<any>(IPC.CONV_GET, { conversationId });
 }
 export async function searchConversations(
   query: string,
 ): Promise<SearchResult[]> {
-  return window.ipc.invoke(IPC.CONV_SEARCH, { query }) as Promise<
-    SearchResult[]
-  >;
+  return ipcInvoke<SearchResult[]>(IPC.CONV_SEARCH, { query });
 }
 export async function listPersonas(): Promise<Persona[]> {
-  return window.ipc.invoke(IPC.PERSONA_LIST) as Promise<Persona[]>;
+  return ipcInvoke<Persona[]>(IPC.PERSONA_LIST);
 }
 export async function savePersona(
   p: Omit<Persona, "id"> & { id?: string },
 ): Promise<Persona> {
-  return window.ipc.invoke(IPC.PERSONA_SAVE, p) as Promise<Persona>;
+  return ipcInvoke<Persona>(IPC.PERSONA_SAVE, p);
 }
 export async function deletePersona(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.PERSONA_DELETE, { id });
+  await ipcInvoke<void>(IPC.PERSONA_DELETE, { id });
 }
 export async function listBackends(): Promise<BackendInfo[]> {
-  return window.ipc.invoke(IPC.BACKEND_LIST) as Promise<BackendInfo[]>;
+  return ipcInvoke<BackendInfo[]>(IPC.BACKEND_LIST);
 }
 export async function probeBackend(
   backend: string,
 ): Promise<{ available: boolean; authenticated: boolean }> {
-  return window.ipc.invoke(IPC.WIZARD_PROBE, { backend }) as Promise<any>;
+  return ipcInvoke<any>(IPC.WIZARD_PROBE, { backend });
 }
 export async function installBackend(
   backend: string,
 ): Promise<{ success: boolean; error?: string }> {
-  return window.ipc.invoke(IPC.WIZARD_INSTALL, { backend }) as Promise<{
+  return ipcInvoke<{
     success: boolean;
     error?: string;
-  }>;
+  }>(IPC.WIZARD_INSTALL, { backend });
 }
 export async function markWizardDone(): Promise<void> {
-  await window.ipc.invoke(IPC.WIZARD_DONE);
+  await ipcInvoke<void>(IPC.WIZARD_DONE);
 }
 
 export async function listPipelineTemplates(): Promise<PipelineTemplate[]> {
-  return window.ipc.invoke(IPC.PIPELINE_LIST) as Promise<PipelineTemplate[]>;
+  return ipcInvoke<PipelineTemplate[]>(IPC.PIPELINE_LIST);
 }
 export async function savePipelineTemplate(p: {
   id?: string;
@@ -112,20 +119,20 @@ export async function savePipelineTemplate(p: {
     personaId: string | null;
   }>;
 }): Promise<PipelineTemplate> {
-  return window.ipc.invoke(IPC.PIPELINE_SAVE, p) as Promise<PipelineTemplate>;
+  return ipcInvoke<PipelineTemplate>(IPC.PIPELINE_SAVE, p);
 }
 export async function deletePipelineTemplate(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.PIPELINE_DELETE, { id });
+  await ipcInvoke<void>(IPC.PIPELINE_DELETE, { id });
 }
 export async function runPipeline(payload: {
   conversationId: string | null;
   message: string;
   templateId: string;
 }): Promise<string> {
-  return window.ipc.invoke(IPC.PIPELINE_RUN, payload) as Promise<string>;
+  return ipcInvoke<string>(IPC.PIPELINE_RUN, payload);
 }
 export async function abortPipeline(conversationId: string): Promise<void> {
-  await window.ipc.invoke(IPC.PIPELINE_ABORT, { conversationId });
+  await ipcInvoke<void>(IPC.PIPELINE_ABORT, { conversationId });
 }
 export function onPipelineChunk(
   cb: (chunk: PipelineChunk & { conversationId: string }) => void,
@@ -147,79 +154,70 @@ export async function ingestAttachments(
   filePaths: string[],
   messageId: string,
 ): Promise<import("../shared/types").Attachment[]> {
-  return window.ipc.invoke(IPC.ATTACHMENT_INGEST, {
-    filePaths,
-    messageId,
-  }) as Promise<import("../shared/types").Attachment[]>;
+  return ipcInvoke<import("../shared/types").Attachment[]>(
+    IPC.ATTACHMENT_INGEST, { filePaths, messageId },
+  );
 }
 export async function listAttachments(
   messageId: string,
 ): Promise<import("../shared/types").Attachment[]> {
-  return window.ipc.invoke(IPC.ATTACHMENT_LIST, { messageId }) as Promise<
-    import("../shared/types").Attachment[]
-  >;
+  return ipcInvoke<import("../shared/types").Attachment[]>(IPC.ATTACHMENT_LIST, { messageId });
 }
 export async function getAttachmentDataUrl(
   storedPath: string,
 ): Promise<string> {
-  return window.ipc.invoke(IPC.ATTACHMENT_DATA_URL, {
-    storedPath,
-  }) as Promise<string>;
+  return ipcInvoke<string>(IPC.ATTACHMENT_DATA_URL, { storedPath });
 }
 export async function deleteConversation(
   conversationId: string,
 ): Promise<void> {
-  await window.ipc.invoke(IPC.CONV_DELETE, { conversationId });
+  await ipcInvoke<void>(IPC.CONV_DELETE, { conversationId });
 }
 export async function renameConversation(
   conversationId: string,
   title: string,
 ): Promise<void> {
-  await window.ipc.invoke(IPC.CONV_RENAME, { conversationId, title });
+  await ipcInvoke<void>(IPC.CONV_RENAME, { conversationId, title });
 }
 
 export async function getAppVersion(): Promise<string> {
-  return window.ipc.invoke(IPC.APP_VERSION) as Promise<string>;
+  return ipcInvoke<string>(IPC.APP_VERSION);
 }
 
 export async function getSetting(key: string): Promise<string | undefined> {
-  return window.ipc.invoke(IPC.SETTING_GET, { key }) as Promise<
-    string | undefined
-  >;
+  return ipcInvoke<string | undefined>(IPC.SETTING_GET, { key });
 }
 export async function setSetting(key: string, value: string): Promise<void> {
-  await window.ipc.invoke(IPC.SETTING_SET, { key, value });
+  await ipcInvoke<void>(IPC.SETTING_SET, { key, value });
 }
 export async function getAllSettings(): Promise<Record<string, string>> {
-  return window.ipc.invoke(IPC.SETTING_GET_ALL) as Promise<
-    Record<string, string>
-  >;
+  return ipcInvoke<Record<string, string>>(IPC.SETTING_GET_ALL);
 }
 
 export async function storeKey(provider: string, key: string): Promise<void> {
-  await window.ipc.invoke(IPC.KEY_STORE, { provider, key });
+  await ipcInvoke<void>(IPC.KEY_STORE, { provider, key });
 }
 export async function getKey(provider: string): Promise<string | null> {
-  return window.ipc.invoke(IPC.KEY_GET, { provider }) as Promise<string | null>;
+  return ipcInvoke<string | null>(IPC.KEY_GET, { provider });
 }
 export async function deleteKey(provider: string): Promise<void> {
-  await window.ipc.invoke(IPC.KEY_DELETE, { provider });
+  await ipcInvoke<void>(IPC.KEY_DELETE, { provider });
 }
 export async function hasKey(provider: string): Promise<boolean> {
-  return window.ipc.invoke(IPC.KEY_HAS, { provider }) as Promise<boolean>;
+  return ipcInvoke<boolean>(IPC.KEY_HAS, { provider });
 }
 export async function listProviders(): Promise<string[]> {
-  return window.ipc.invoke(IPC.KEY_LIST) as Promise<string[]>;
+  return ipcInvoke<string[]>(IPC.KEY_LIST);
 }
 
 export async function getDefaultModel(provider: string): Promise<string> {
-  return window.ipc.invoke(IPC.MODEL_GET_DEFAULT, { provider }) as Promise<string>;
+  return ipcInvoke<string>(IPC.MODEL_GET_DEFAULT, { provider });
 }
 export async function setDefaultModel(provider: string, model: string): Promise<void> {
-  await window.ipc.invoke(IPC.MODEL_SET_DEFAULT, { provider, model });
+  await ipcInvoke<void>(IPC.MODEL_SET_DEFAULT, { provider, model });
 }
 export async function listModels(provider: string): Promise<string[]> {
-  return window.ipc.invoke(IPC.MODEL_LIST, { provider }) as Promise<string[]>;
+  return ipcInvoke<string[]>(IPC.MODEL_LIST, { provider });
 }
 
 export function onSecurityEvent(
@@ -233,11 +231,11 @@ export function onSecurityEvent(
 export async function respondSecurity(
   payload: SecurityRespondPayload,
 ): Promise<void> {
-  await window.ipc.invoke(IPC.SECURITY_RESPOND, payload);
+  await ipcInvoke<void>(IPC.SECURITY_RESPOND, payload);
 }
 
 export async function getCronJobs(): Promise<CronJob[]> {
-  return window.ipc.invoke(IPC.CRON_LIST) as Promise<CronJob[]>;
+  return ipcInvoke<CronJob[]>(IPC.CRON_LIST);
 }
 export async function createCronJob(input: {
   name: string;
@@ -245,7 +243,7 @@ export async function createCronJob(input: {
   prompt: string;
   backend: string;
 }): Promise<CronJob> {
-  return window.ipc.invoke(IPC.CRON_CREATE, input) as Promise<CronJob>;
+  return ipcInvoke<CronJob>(IPC.CRON_CREATE, input);
 }
 export async function updateCronJob(
   id: string,
@@ -256,28 +254,23 @@ export async function updateCronJob(
     backend: string;
   }>,
 ): Promise<CronJob> {
-  return window.ipc.invoke(IPC.CRON_UPDATE, {
-    id,
-    ...changes,
-  }) as Promise<CronJob>;
+  return ipcInvoke<CronJob>(IPC.CRON_UPDATE, { id, ...changes });
 }
 export async function deleteCronJob(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.CRON_DELETE, { id });
+  await ipcInvoke<void>(IPC.CRON_DELETE, { id });
 }
 export async function toggleCronJob(id: string): Promise<CronJob> {
-  return window.ipc.invoke(IPC.CRON_TOGGLE, { id }) as Promise<CronJob>;
+  return ipcInvoke<CronJob>(IPC.CRON_TOGGLE, { id });
 }
 export async function getCronJobLogs(cronJobId: string): Promise<CronJobLog[]> {
-  return window.ipc.invoke(IPC.CRON_LOGS, { cronJobId }) as Promise<
-    CronJobLog[]
-  >;
+  return ipcInvoke<CronJobLog[]>(IPC.CRON_LOGS, { cronJobId });
 }
 export async function runCronJobNow(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.CRON_RUN_NOW, { id });
+  await ipcInvoke<void>(IPC.CRON_RUN_NOW, { id });
 }
 
 export async function listMcpServers(): Promise<McpServerConfig[]> {
-  return window.ipc.invoke(IPC.MCP_LIST_SERVERS) as Promise<McpServerConfig[]>;
+  return ipcInvoke<McpServerConfig[]>(IPC.MCP_LIST_SERVERS);
 }
 export async function addMcpServer(config: {
   name: string;
@@ -285,49 +278,41 @@ export async function addMcpServer(config: {
   args: string[];
   env?: Record<string, string>;
 }): Promise<McpServerConfig> {
-  return window.ipc.invoke(
-    IPC.MCP_ADD_SERVER,
-    config,
-  ) as Promise<McpServerConfig>;
+  return ipcInvoke<McpServerConfig>(IPC.MCP_ADD_SERVER, config);
 }
 export async function removeMcpServer(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.MCP_REMOVE_SERVER, { id });
+  await ipcInvoke<void>(IPC.MCP_REMOVE_SERVER, { id });
 }
 export async function toggleMcpServer(
   id: string,
 ): Promise<McpServerConfig | undefined> {
-  return window.ipc.invoke(IPC.MCP_TOGGLE_SERVER, { id }) as Promise<
-    McpServerConfig | undefined
-  >;
+  return ipcInvoke<McpServerConfig | undefined>(IPC.MCP_TOGGLE_SERVER, { id });
 }
 export async function listMcpTools(): Promise<McpTool[]> {
-  return window.ipc.invoke(IPC.MCP_LIST_TOOLS) as Promise<McpTool[]>;
+  return ipcInvoke<McpTool[]>(IPC.MCP_LIST_TOOLS);
 }
 export async function callMcpTool(
   request: import("../shared/types").McpToolCallRequest,
 ): Promise<McpToolCallResult> {
-  return window.ipc.invoke(
-    IPC.MCP_CALL_TOOL,
-    request,
-  ) as Promise<McpToolCallResult>;
+  return ipcInvoke<McpToolCallResult>(IPC.MCP_CALL_TOOL, request);
 }
 
 export async function listPlugins(): Promise<PluginInfo[]> {
-  return window.ipc.invoke(IPC.PLUGIN_LIST) as Promise<PluginInfo[]>;
+  return ipcInvoke<PluginInfo[]>(IPC.PLUGIN_LIST);
 }
 export async function togglePlugin(id: string): Promise<void> {
-  await window.ipc.invoke(IPC.PLUGIN_TOGGLE, { id });
+  await ipcInvoke<void>(IPC.PLUGIN_TOGGLE, { id });
 }
 export async function reloadPlugins(): Promise<void> {
-  await window.ipc.invoke(IPC.PLUGIN_RELOAD);
+  await ipcInvoke<void>(IPC.PLUGIN_RELOAD);
 }
 
 export async function downloadUpdate(): Promise<void> {
-  await window.ipc.invoke(IPC.UPDATE_DOWNLOAD);
+  await ipcInvoke<void>(IPC.UPDATE_DOWNLOAD);
 }
 
 export async function installUpdate(): Promise<void> {
-  await window.ipc.invoke(IPC.UPDATE_INSTALL);
+  await ipcInvoke<void>(IPC.UPDATE_INSTALL);
 }
 
 export function onUpdateAvailable(

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { GearSix, MagnifyingGlass } from "@phosphor-icons/react";
+import { GearSix, MagnifyingGlass, List } from "@phosphor-icons/react";
 import { SetupWizard } from "./components/Wizard/SetupWizard";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { ChatView } from "./components/Chat/ChatView";
@@ -10,6 +10,7 @@ import { BackendSwitcher } from "./components/BackendSwitcher";
 import { ModelSelector } from "./components/Toolbar/ModelSelector";
 import { SecurityDialog } from "./components/SecurityDialog";
 import { UpdateBanner } from "./components/UpdateBanner";
+import { DiagnosticBanner } from "./components/DiagnosticBanner";
 import { usePipelines } from "./hooks/usePipelines";
 import {
   getConversation,
@@ -59,6 +60,7 @@ function App() {
   const [showCron, setShowCron] = useState(false);
   const [showMCP, setShowMCP] = useState(false);
   const [showPlugins, setShowPlugins] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
 
@@ -137,8 +139,10 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+      <DiagnosticBanner />
       <Sidebar
+        collapsed={sidebarCollapsed}
         activeId={activeConvId}
         onSelect={(id) => {
           setActiveConvId(id);
@@ -158,10 +162,18 @@ function App() {
         showPlugins={showPlugins}
       />
 
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col flex-1 min-w-[480px]">
         <UpdateBanner />
         {/* Toolbar */}
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+        <nav aria-label="Toolbar" className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+          <button
+            onClick={() => setSidebarCollapsed((v) => !v)}
+            className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0"
+            aria-label={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+            title={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+          >
+            <List size={16} />
+          </button>
           {/* Zone 1: Mode + Backend */}
           <div className="flex rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden text-xs">
             <button
@@ -169,12 +181,14 @@ function App() {
                 setMode("single");
                 setSelectedTemplate(null);
               }}
+              aria-pressed={mode === "single"}
               className={`px-3 py-1 transition-transform duration-100 ease-press active:scale-95 ${mode === "single" ? "bg-blue-600 text-white" : "hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"}`}
             >
               Single
             </button>
             <button
               onClick={() => setMode("pipeline")}
+              aria-pressed={mode === "pipeline"}
               className={`px-3 py-1 transition-transform duration-100 ease-press active:scale-95 ${mode === "pipeline" ? "bg-blue-600 text-white" : "hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"}`}
             >
               Pipeline
@@ -272,9 +286,9 @@ function App() {
           >
             <GearSix size={16} />
           </button>
-        </div>
+        </nav>
 
-        <div className="flex flex-1 min-h-0">
+        <main className="flex flex-1 min-h-0">
           {!activeConvId && mode === "single" ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
               <h2 className="text-sm font-semibold mb-2">
@@ -311,7 +325,7 @@ function App() {
                 : "max-w-0 opacity-0"
             }`}
           >
-            <div className="w-72 overflow-y-auto h-full">
+            <div className="w-72 lg:w-56 overflow-y-auto h-full">
               <PersonaPanel
                 activePersonaId={personaId}
                 onSelect={setPersonaId}
@@ -325,7 +339,7 @@ function App() {
                 : "max-w-0 opacity-0"
             }`}
           >
-            <div className="w-72 overflow-y-auto h-full">
+            <div className="w-72 lg:w-56 overflow-y-auto h-full">
               <PipelinePanel
                 activeTemplateId={activePipelineTemplate?.id ?? null}
                 onSelect={(t) => {
@@ -351,7 +365,7 @@ function App() {
               }}
             />
           </div>
-        </div>
+        </main>
       </div>
       {securityEvents.length > 0 && (
         <SecurityDialog
