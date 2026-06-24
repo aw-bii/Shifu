@@ -28,7 +28,7 @@ describe("McpPanel", () => {
     vi.mocked(listMcpTools).mockResolvedValue([]);
     render(<McpPanel />);
     await waitFor(() => {
-      expect(screen.getByText(/No MCP servers configured/i)).toBeTruthy();
+      expect(screen.getByText(/No servers configured/i)).toBeTruthy();
     });
   });
 

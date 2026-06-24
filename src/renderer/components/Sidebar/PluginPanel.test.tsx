@@ -19,7 +19,7 @@ describe("PluginPanel", () => {
     vi.mocked(listPlugins).mockResolvedValue([]);
     render(<PluginPanel />);
     await waitFor(() => {
-      expect(screen.getByText(/No plugins discovered/i)).toBeTruthy();
+      expect(screen.getByText(/No plugins found/i)).toBeTruthy();
     });
   });
 
