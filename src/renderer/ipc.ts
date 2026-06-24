@@ -196,6 +196,32 @@ export async function getAllSettings(): Promise<Record<string, string>> {
   >;
 }
 
+export async function storeKey(provider: string, key: string): Promise<void> {
+  await window.ipc.invoke(IPC.KEY_STORE, { provider, key });
+}
+export async function getKey(provider: string): Promise<string | null> {
+  return window.ipc.invoke(IPC.KEY_GET, { provider }) as Promise<string | null>;
+}
+export async function deleteKey(provider: string): Promise<void> {
+  await window.ipc.invoke(IPC.KEY_DELETE, { provider });
+}
+export async function hasKey(provider: string): Promise<boolean> {
+  return window.ipc.invoke(IPC.KEY_HAS, { provider }) as Promise<boolean>;
+}
+export async function listProviders(): Promise<string[]> {
+  return window.ipc.invoke(IPC.KEY_LIST) as Promise<string[]>;
+}
+
+export async function getDefaultModel(provider: string): Promise<string> {
+  return window.ipc.invoke(IPC.MODEL_GET_DEFAULT, { provider }) as Promise<string>;
+}
+export async function setDefaultModel(provider: string, model: string): Promise<void> {
+  await window.ipc.invoke(IPC.MODEL_SET_DEFAULT, { provider, model });
+}
+export async function listModels(provider: string): Promise<string[]> {
+  return window.ipc.invoke(IPC.MODEL_LIST, { provider }) as Promise<string[]>;
+}
+
 export function onSecurityEvent(
   listener: (event: SecurityEvent) => void,
 ): () => void {

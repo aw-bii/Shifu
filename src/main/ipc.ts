@@ -13,6 +13,7 @@ import { McpClientManager } from "./mcp/mcp-client-manager";
 import { PluginManager } from "./plugins/plugin-manager";
 import { PathSecurity } from "./security/path-security";
 import { WriteApproval } from "./security/write-approval";
+import { KeyManager } from "./security/key-manager";
 import cron from "node-cron";
 import path from "path";
 
@@ -185,6 +186,33 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     ConvStore.setSetting(key, value),
   );
   ipcMain.handle(IPC.SETTING_GET_ALL, () => ConvStore.getAllSettings());
+
+  ipcMain.handle(IPC.KEY_STORE, (_event, { provider, key }) => {
+    KeyManager.storeKey(provider, key);
+  });
+  ipcMain.handle(IPC.KEY_GET, (_event, { provider }) =>
+    KeyManager.getKey(provider),
+  );
+  ipcMain.handle(IPC.KEY_DELETE, (_event, { provider }) => {
+    KeyManager.deleteKey(provider);
+  });
+  ipcMain.handle(IPC.KEY_HAS, (_event, { provider }) =>
+    KeyManager.hasKey(provider),
+  );
+  ipcMain.handle(IPC.KEY_LIST, () => KeyManager.listProviders());
+
+  ipcMain.handle(IPC.MODEL_GET_DEFAULT, (_event, { provider }) => {
+    const model = ConvStore.getSetting(`model:${provider}`);
+    return model || "";
+  });
+  ipcMain.handle(IPC.MODEL_SET_DEFAULT, (_event, { provider, model }) => {
+    ConvStore.setSetting(`model:${provider}`, model);
+  });
+  ipcMain.handle(IPC.MODEL_LIST, async (_event, { provider }) => {
+    const adapter = AdapterManager.get(provider);
+    if (!adapter || !("listModels" in adapter)) return [];
+    return (adapter as any).listModels();
+  });
 
   ipcMain.handle(IPC.PIPELINE_LIST, () => ConvStore.listPipelineTemplates());
 

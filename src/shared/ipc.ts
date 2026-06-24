@@ -58,6 +58,15 @@ export const IPC = {
   PLUGIN_TOGGLE: "plugin:toggle",
   PLUGIN_RELOAD: "plugin:reload",
   PLUGIN_GET_EVENTS: "plugin:get-events",
+
+  KEY_STORE: "key:store",
+  KEY_GET: "key:get",
+  KEY_DELETE: "key:delete",
+  KEY_HAS: "key:has",
+  KEY_LIST: "key:list",
+  MODEL_GET_DEFAULT: "model:get-default",
+  MODEL_SET_DEFAULT: "model:set-default",
+  MODEL_LIST: "model:list",
 } as const;
 
 export type IpcChannels = typeof IPC;
@@ -69,6 +78,7 @@ export interface IpcInvokeMap {
     backend: string;
     personaId?: string;
     messageId?: string;
+    model?: string;
   };
   [IPC.CHAT_ABORT]: { conversationId: string };
   [IPC.CONV_LIST]: { limit: number; offset: number };
@@ -150,6 +160,15 @@ export interface IpcInvokeMap {
   [IPC.PLUGIN_TOGGLE]: { id: string };
   [IPC.PLUGIN_RELOAD]: void;
   [IPC.PLUGIN_GET_EVENTS]: { conversationId?: string };
+
+  [IPC.KEY_STORE]: { provider: string; key: string };
+  [IPC.KEY_GET]: { provider: string };
+  [IPC.KEY_DELETE]: { provider: string };
+  [IPC.KEY_HAS]: { provider: string };
+  [IPC.KEY_LIST]: void;
+  [IPC.MODEL_GET_DEFAULT]: { provider: string };
+  [IPC.MODEL_SET_DEFAULT]: { provider: string; model: string };
+  [IPC.MODEL_LIST]: { provider: string };
 }
 
 export interface IpcPushMap {
@@ -170,4 +189,9 @@ export interface IpcPushMap {
 
 export interface IpcReturnMap {
   [IPC.CONV_SEARCH]: import("./types").SearchResult[];
+  [IPC.KEY_GET]: string | null;
+  [IPC.KEY_HAS]: boolean;
+  [IPC.KEY_LIST]: string[];
+  [IPC.MODEL_GET_DEFAULT]: string;
+  [IPC.MODEL_LIST]: string[];
 }
