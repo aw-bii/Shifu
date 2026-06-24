@@ -1,5 +1,21 @@
 import { useState, useEffect } from "react";
-import { getSetting, setSetting, getAppVersion } from "../../ipc";
+import {
+  getSetting,
+  setSetting,
+  getAppVersion,
+  storeKey,
+  deleteKey,
+  hasKey,
+  probeBackend,
+} from "../../ipc";
+
+const API_PROVIDERS = [
+  { id: "openai", label: "OpenAI" },
+  { id: "openrouter", label: "OpenRouter" },
+  { id: "claude-api", label: "Claude API" },
+  { id: "gemini-api", label: "Gemini API" },
+  { id: "ollama", label: "Ollama" },
+];
 
 interface Props {
   onClose: () => void;
@@ -9,6 +25,9 @@ interface Props {
 export function SettingsPanel({ onClose, onReRunWizard }: Props) {
   const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
   const [version, setVersion] = useState("");
+  const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+  const [keyStates, setKeyStates] = useState<Record<string, boolean>>({});
+  const [testing, setTesting] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     getAppVersion().then(setVersion);
@@ -18,6 +37,19 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
     getSetting("theme").then((v) => {
       if (v === "light" || v === "dark" || v === "system")
         setTheme(v as typeof theme);
+    });
+  }, []);
+
+  useEffect(() => {
+    Promise.all(
+      API_PROVIDERS.map(async (p) => {
+        const exists = await hasKey(p.id);
+        return { id: p.id, exists };
+      }),
+    ).then((results) => {
+      setKeyStates(
+        Object.fromEntries(results.map((r) => [r.id, r.exists])),
+      );
     });
   }, []);
 
@@ -32,6 +64,29 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
       ).matches;
       document.documentElement.classList.toggle("dark", prefersDark);
     }
+  };
+
+  const handleSaveKey = async (provider: string) => {
+    const key = apiKeys[provider]?.trim();
+    if (!key) {
+      await deleteKey(provider);
+      setKeyStates((prev) => ({ ...prev, [provider]: false }));
+    } else {
+      await storeKey(provider, key);
+      setKeyStates((prev) => ({ ...prev, [provider]: true }));
+    }
+    setApiKeys((prev) => ({ ...prev, [provider]: "" }));
+  };
+
+  const handleTest = async (provider: string) => {
+    setTesting((prev) => ({ ...prev, [provider]: true }));
+    const result = await probeBackend(provider);
+    setTesting((prev) => ({ ...prev, [provider]: false }));
+    alert(
+      result.available && result.authenticated
+        ? `${provider}: connected and authenticated`
+        : `${provider}: ${!result.available ? "not available" : "not authenticated"}`,
+    );
   };
 
   return (
@@ -58,6 +113,55 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
             <option value="dark">Dark</option>
           </select>
         </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+          <span className="text-xs font-semibold block mb-2">API Keys</span>
+          <div className="space-y-3">
+            {API_PROVIDERS.map((p) => (
+              <div key={p.id}>
+                <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
+                  {p.label}
+                </label>
+                {p.id === "ollama" ? (
+                  <p className="text-xs text-gray-400 dark:text-gray-500 italic">
+                    No key needed — connects to localhost:11434
+                  </p>
+                ) : (
+                  <div className="flex gap-1">
+                    <input
+                      type="password"
+                      className="flex-1 text-xs border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-600"
+                      placeholder={
+                        keyStates[p.id] ? "Key set — blank to delete" : "sk-..."
+                      }
+                      value={apiKeys[p.id] ?? ""}
+                      onChange={(e) =>
+                        setApiKeys((prev) => ({
+                          ...prev,
+                          [p.id]: e.target.value,
+                        }))
+                      }
+                    />
+                    <button
+                      onClick={() => handleSaveKey(p.id)}
+                      className="btn-sm bg-blue-600 text-white hoverable:hover:bg-blue-700 text-xs px-2"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => handleTest(p.id)}
+                      disabled={testing[p.id]}
+                      className="btn-sm border border-gray-300 dark:border-gray-600 text-xs px-2 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"
+                    >
+                      {testing[p.id] ? "..." : "Test"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div>
           <button
             onClick={onReRunWizard}
