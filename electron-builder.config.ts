@@ -26,7 +26,7 @@ export default {
   publish: {
     provider: "github",
     owner: "aw-bii",
-    repo: "myra",
+    repo: "MyRA",
     releaseType: "release",
   },
 } satisfies Configuration;
