@@ -171,7 +171,7 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="flex h-screen overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <DiagnosticBanner />
       {viewportLg ? (
         <Sidebar
@@ -373,6 +373,14 @@ function App() {
               >
                 New conversation
               </button>
+            </div>
+          ) : !activeConvId && mode === "pipeline" ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+              <h2 className="text-sm font-semibold mb-2">Pipeline mode</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 max-w-xs">
+                Select a pipeline template from the toolbar above, then type your
+                first message to begin.
+              </p>
             </div>
           ) : (
             <ChatView
