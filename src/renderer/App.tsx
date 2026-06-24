@@ -309,21 +309,30 @@ function App() {
             <MagnifyingGlass size={16} />
           </button>
           <button
-            onClick={() => setShowCron((v) => !v)}
+            onClick={() => {
+              setShowCron((v) => !v);
+              setSidebarCollapsed(false);
+            }}
             title="Scheduled tasks"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showCron ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Cron
           </button>
           <button
-            onClick={() => setShowMCP((v) => !v)}
+            onClick={() => {
+              setShowMCP((v) => !v);
+              setSidebarCollapsed(false);
+            }}
             title="Model Context Protocol servers"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showMCP ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             MCP
           </button>
           <button
-            onClick={() => setShowPlugins((v) => !v)}
+            onClick={() => {
+              setShowPlugins((v) => !v);
+              setSidebarCollapsed(false);
+            }}
             title="Installed plugins"
             className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showPlugins ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
