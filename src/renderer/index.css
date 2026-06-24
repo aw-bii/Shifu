@@ -59,3 +59,8 @@
     min-width: 44px;
   }
 }
+
+@media (min-resolution: 1.25dppx) {
+  .btn-sm { @apply px-1.5 py-0.5; }
+  .btn-md { @apply px-2 py-1; }
+}

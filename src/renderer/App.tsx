@@ -71,6 +71,13 @@ function App() {
   const [showMCP, setShowMCP] = useState(false);
   const [showPlugins, setShowPlugins] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [viewportLg, setViewportLg] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const onResize = () => setViewportLg(window.innerWidth >= 1024);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
   const [online, setOnline] = useState(true);
@@ -166,28 +173,66 @@ function App() {
   return (
     <div className="flex min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <DiagnosticBanner />
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        activeId={activeConvId}
-        onSelect={(id) => {
-          setActiveConvId(id);
-          setShowCron(false);
-          setShowMCP(false);
-          setShowPlugins(false);
-        }}
-        onNew={handleNew}
-        onDelete={handleDelete}
-        onRename={handleRename}
-        searchInputRef={searchInputRef}
-        refreshTrigger={refreshTrigger}
-        searchMode={searchMode}
-        onCloseSearch={() => setSearchMode(false)}
-        showCron={showCron}
-        showMCP={showMCP}
-        showPlugins={showPlugins}
-      />
+      {viewportLg ? (
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          activeId={activeConvId}
+          onSelect={(id) => {
+            setActiveConvId(id);
+            setShowCron(false);
+            setShowMCP(false);
+            setShowPlugins(false);
+          }}
+          onNew={handleNew}
+          onDelete={handleDelete}
+          onRename={handleRename}
+          searchInputRef={searchInputRef}
+          refreshTrigger={refreshTrigger}
+          searchMode={searchMode}
+          onCloseSearch={() => setSearchMode(false)}
+          showCron={showCron}
+          showMCP={showMCP}
+          showPlugins={showPlugins}
+        />
+      ) : (
+        <>
+          {!sidebarCollapsed && (
+            <div
+              className="fixed inset-0 z-30 bg-black/30"
+              onClick={() => setSidebarCollapsed(true)}
+            />
+          )}
+          <div
+            className={`fixed left-0 top-0 z-40 h-full transition-transform duration-200 ease-drawer ${
+              sidebarCollapsed ? "-translate-x-full" : "translate-x-0"
+            }`}
+          >
+            <Sidebar
+              collapsed={sidebarCollapsed}
+              activeId={activeConvId}
+              onSelect={(id) => {
+                setSidebarCollapsed(true);
+                setActiveConvId(id);
+                setShowCron(false);
+                setShowMCP(false);
+                setShowPlugins(false);
+              }}
+              onNew={() => { handleNew(); setSidebarCollapsed(true); }}
+              onDelete={handleDelete}
+              onRename={handleRename}
+              searchInputRef={searchInputRef}
+              refreshTrigger={refreshTrigger}
+              searchMode={searchMode}
+              onCloseSearch={() => setSearchMode(false)}
+              showCron={showCron}
+              showMCP={showMCP}
+              showPlugins={showPlugins}
+            />
+          </div>
+        </>
+      )}
 
-      <div className="flex flex-col flex-1 min-w-[480px]">
+      <div className="flex flex-col flex-1 min-w-0 overflow-x-hidden">
         <UpdateBanner />
         {!online && (
           <div className="px-4 py-1 bg-yellow-100 dark:bg-yellow-900 text-xs text-yellow-800 dark:text-yellow-200 border-b border-yellow-200 dark:border-yellow-700">
@@ -195,7 +240,7 @@ function App() {
           </div>
         )}
         {/* Toolbar */}
-        <nav aria-label="Toolbar" className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+        <nav aria-label="Toolbar" className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto flex-shrink-0">
           <button
             onClick={() => setSidebarCollapsed((v) => !v)}
             className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0"
@@ -205,7 +250,7 @@ function App() {
             <List size={16} />
           </button>
           {/* Zone 1: Mode + Backend */}
-          <div className="flex rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden text-xs">
+          <div className="flex rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden text-xs flex-shrink-0">
             <button
               onClick={() => {
                 setMode("single");
@@ -227,8 +272,8 @@ function App() {
 
           {mode === "single" && !activeConvMeta?.pipelineTemplateId && (
             <>
-              <BackendSwitcher value={backend} onChange={setBackend} />
-              <ModelSelector provider={backend} value={model} onChange={setModel} />
+              <div className="flex-shrink-0"><BackendSwitcher value={backend} onChange={setBackend} /></div>
+              <div className="flex-shrink-0"><ModelSelector provider={backend} value={model} onChange={setModel} /></div>
             </>
           )}
 
@@ -252,13 +297,13 @@ function App() {
           )}
 
           {/* Divider */}
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0 shrink-0" />
 
           {/* Zone 2: Sidebar tools */}
           <button
             onClick={() => setSearchMode((v) => !v)}
             title="Search conversations (Ctrl+F)"
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${searchMode ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${searchMode ? "bg-blue-100 dark:bg-blue-900" : ""}`}
             aria-label="Search conversations"
           >
             <MagnifyingGlass size={16} />
@@ -266,46 +311,46 @@ function App() {
           <button
             onClick={() => setShowCron((v) => !v)}
             title="Scheduled tasks"
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showCron ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showCron ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Cron
           </button>
           <button
             onClick={() => setShowMCP((v) => !v)}
             title="Model Context Protocol servers"
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showMCP ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showMCP ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             MCP
           </button>
           <button
             onClick={() => setShowPlugins((v) => !v)}
             title="Installed plugins"
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPlugins ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showPlugins ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Plugins
           </button>
 
           {/* Spacer + Divider */}
-          <div className="flex-1" />
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+          <div className="flex-1 flex-shrink-0" />
+          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 flex-shrink-0 shrink-0" />
 
           {/* Zone 3: Right panels */}
           <button
             onClick={() => togglePanel("personas")}
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPersonas ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showPersonas ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Personas
           </button>
           <button
             onClick={() => togglePanel("pipelines")}
-            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 ${showPipelines ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+            className={`btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0 ${showPipelines ? "bg-blue-100 dark:bg-blue-900" : ""}`}
           >
             Pipelines
           </button>
           <button
             onClick={() => togglePanel("settings")}
             title="Settings"
-            className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800"
+            className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 flex-shrink-0"
             aria-label="Settings"
           >
             <GearSix size={16} />

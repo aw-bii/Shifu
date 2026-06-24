@@ -43,7 +43,7 @@ export function SetupWizard({ onComplete }: Props) {
   };
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 motion-safe:animate-scale-in">
         <div className="flex gap-1 mb-2">
           {[1, 2, 3].map((n) => (
