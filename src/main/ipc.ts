@@ -14,6 +14,7 @@ import { PluginManager } from "./plugins/plugin-manager";
 import { PathSecurity } from "./security/path-security";
 import { WriteApproval } from "./security/write-approval";
 import { KeyManager } from "./security/key-manager";
+import https from "https";
 import cron from "node-cron";
 import path from "path";
 
@@ -169,6 +170,35 @@ export function registerIpcHandlers(win: BrowserWindow): void {
 
   ipcMain.handle(IPC.WIZARD_DONE, () => {
     ConvStore.setSetting("wizard_done", "1");
+  });
+
+  ipcMain.handle(IPC.NET_CHECK, async () => {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const req = https.get("https://registry.npmjs.org", { timeout: 5000 }, () => {
+          resolve();
+        });
+        req.on("error", reject);
+        req.on("timeout", () => { req.destroy(); reject(new Error("timeout")); });
+      });
+      return { online: true };
+    } catch {
+      return { online: false };
+    }
+  });
+
+  ipcMain.handle(IPC.NET_GET_PROXY, () => {
+    return {
+      httpProxy: process.env.HTTP_PROXY || process.env.http_proxy || "",
+      httpsProxy: process.env.HTTPS_PROXY || process.env.https_proxy || "",
+      noProxy: process.env.NO_PROXY || process.env.no_proxy || "",
+    };
+  });
+
+  ipcMain.handle(IPC.NET_SET_PROXY, (_event, { httpProxy, httpsProxy, noProxy }) => {
+    ConvStore.setSetting("proxy_http", httpProxy || "");
+    ConvStore.setSetting("proxy_https", httpsProxy || "");
+    ConvStore.setSetting("proxy_no", noProxy || "");
   });
 
   ipcMain.handle(IPC.CONV_DELETE, (_event, { conversationId }) => {

@@ -1,4 +1,5 @@
 import { spawn, execSync } from "child_process";
+import { getDb } from "../store/db";
 
 const INSTALL_COMMANDS: Record<string, [string, string[]]> = {
   gemini: ["npm", ["install", "-g", "@google/gemini-cli"]],
@@ -12,6 +13,18 @@ function canSpawnNpm(): { ok: boolean; error?: string } {
   } catch {
     return { ok: false, error: "npm not found in PATH. Install Node.js from https://nodejs.org" };
   }
+}
+
+function getProxyEnv(): Record<string, string> {
+  const db = getDb();
+  const http = db.prepare("SELECT value FROM settings WHERE key = ?").get("proxy_http") as any;
+  const https = db.prepare("SELECT value FROM settings WHERE key = ?").get("proxy_https") as any;
+  const no = db.prepare("SELECT value FROM settings WHERE key = ?").get("proxy_no") as any;
+  const env: Record<string, string> = {};
+  if (http?.value) { env.HTTP_PROXY = http.value; env.http_proxy = http.value; }
+  if (https?.value) { env.HTTPS_PROXY = https.value; env.https_proxy = https.value; }
+  if (no?.value) { env.NO_PROXY = no.value; env.no_proxy = no.value; }
+  return env;
 }
 
 export function installBackend(
@@ -32,7 +45,7 @@ export function installBackend(
     const p = spawn(binary, args, {
       stdio: "pipe",
       shell: isWin,
-      env: { ...process.env },
+      env: { ...process.env, ...getProxyEnv() },
     });
     let stderrOutput = "";
     p.stdout!.on("data", (buf: Buffer) =>

@@ -7,6 +7,8 @@ import {
   deleteKey,
   hasKey,
   probeBackend,
+  getProxySettings,
+  setProxySettings,
 } from "../../ipc";
 
 const API_PROVIDERS = [
@@ -28,6 +30,9 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [keyStates, setKeyStates] = useState<Record<string, boolean>>({});
   const [testing, setTesting] = useState<Record<string, boolean>>({});
+  const [proxyHttp, setProxyHttp] = useState("");
+  const [proxyHttps, setProxyHttps] = useState("");
+  const [proxyNo, setProxyNo] = useState("");
 
   useEffect(() => {
     getAppVersion().then(setVersion);
@@ -62,6 +67,18 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, [theme]);
+
+  useEffect(() => {
+    getProxySettings().then((p) => {
+      setProxyHttp(p.httpProxy);
+      setProxyHttps(p.httpsProxy);
+      setProxyNo(p.noProxy);
+    }).catch(() => {});
+  }, []);
+
+  const saveProxy = async () => {
+    await setProxySettings({ httpProxy: proxyHttp, httpsProxy: proxyHttps, noProxy: proxyNo });
+  };
 
   const handleThemeChange = async (t: "system" | "light" | "dark") => {
     setTheme(t);
@@ -169,6 +186,45 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+          <span className="text-xs font-semibold block mb-2">Network Proxy</span>
+          <div className="space-y-2">
+            <div>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">HTTP_PROXY</label>
+              <input
+                className="w-full text-xs border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-600"
+                placeholder="http://proxy:8080"
+                value={proxyHttp}
+                onChange={(e) => setProxyHttp(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">HTTPS_PROXY</label>
+              <input
+                className="w-full text-xs border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-600"
+                placeholder="https://proxy:8443"
+                value={proxyHttps}
+                onChange={(e) => setProxyHttps(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">NO_PROXY</label>
+              <input
+                className="w-full text-xs border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-600"
+                placeholder="localhost,127.0.0.1"
+                value={proxyNo}
+                onChange={(e) => setProxyNo(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={saveProxy}
+              className="btn-sm bg-blue-600 text-white hoverable:hover:bg-blue-700 text-xs w-full mt-1"
+            >
+              Save Proxy
+            </button>
           </div>
         </div>
 

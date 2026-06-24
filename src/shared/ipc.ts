@@ -20,6 +20,9 @@ export const IPC = {
   PIPELINE_CHUNK: "pipeline:chunk",
   PIPELINE_STEP_DONE: "pipeline:step-done",
   PIPELINE_DONE: "pipeline:done",
+  NET_CHECK: "net:check",
+  NET_SET_PROXY: "net:set-proxy",
+  NET_GET_PROXY: "net:get-proxy",
   PIPELINE_ABORT: "pipeline:abort",
   ATTACHMENT_INGEST: "attachment:ingest",
   ATTACHMENT_LIST: "attachment:list",
@@ -169,6 +172,10 @@ export interface IpcInvokeMap {
   [IPC.MODEL_GET_DEFAULT]: { provider: string };
   [IPC.MODEL_SET_DEFAULT]: { provider: string; model: string };
   [IPC.MODEL_LIST]: { provider: string };
+
+  [IPC.NET_CHECK]: void;
+  [IPC.NET_SET_PROXY]: { httpProxy: string; httpsProxy: string; noProxy: string };
+  [IPC.NET_GET_PROXY]: void;
 }
 
 export interface IpcPushMap {
@@ -194,4 +201,7 @@ export interface IpcReturnMap {
   [IPC.KEY_LIST]: string[];
   [IPC.MODEL_GET_DEFAULT]: string;
   [IPC.MODEL_LIST]: string[];
+
+  [IPC.NET_CHECK]: { online: boolean };
+  [IPC.NET_GET_PROXY]: { httpProxy: string; httpsProxy: string; noProxy: string };
 }

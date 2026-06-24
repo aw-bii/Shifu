@@ -20,6 +20,7 @@ import {
   getSetting,
   onSecurityEvent,
   respondSecurity,
+  checkConnectivity,
 } from "./ipc";
 import type {
   PipelineTemplate,
@@ -63,6 +64,7 @@ function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
+  const [online, setOnline] = useState(true);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -134,6 +136,10 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    checkConnectivity().then((r) => setOnline(r.online)).catch(() => setOnline(false));
+  }, []);
+
   if (!wizardDone) {
     return <SetupWizard onComplete={() => setWizardDone(true)} />;
   }
@@ -164,6 +170,11 @@ function App() {
 
       <div className="flex flex-col flex-1 min-w-[480px]">
         <UpdateBanner />
+        {!online && (
+          <div className="px-4 py-1 bg-yellow-100 dark:bg-yellow-900 text-xs text-yellow-800 dark:text-yellow-200 border-b border-yellow-200 dark:border-yellow-700">
+            No internet connection. Some features require internet access.
+          </div>
+        )}
         {/* Toolbar */}
         <nav aria-label="Toolbar" className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
           <button
