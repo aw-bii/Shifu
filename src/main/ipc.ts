@@ -136,6 +136,10 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     ConvStore.listConversations(limit, offset),
   );
 
+  ipcMain.handle(IPC.CONV_CREATE, (_event, { title, backend, personaId }) => {
+    return ConvStore.createConversation(title || "New conversation", backend || "claude", personaId || null);
+  });
+
   ipcMain.handle(IPC.CONV_GET, (_event, { conversationId }) => ({
     conversation: ConvStore.getConversation(conversationId),
     messages: ConvStore.getMessages(conversationId),

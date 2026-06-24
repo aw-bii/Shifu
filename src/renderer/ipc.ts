@@ -65,6 +65,10 @@ export async function listConversations(
 ): Promise<Conversation[]> {
   return ipcInvoke<Conversation[]>(IPC.CONV_LIST, { limit, offset });
 }
+export async function createConversation(title: string, backend: string, personaId?: string): Promise<Conversation> {
+  return ipcInvoke<Conversation>(IPC.CONV_CREATE, { title, backend, personaId });
+}
+
 export async function getConversation(
   conversationId: string,
 ): Promise<{ conversation: Conversation; messages: Message[] }> {

@@ -4,6 +4,7 @@ export const IPC = {
   CHAT_DONE: "chat:done",
   CHAT_ABORT: "chat:abort",
   CONV_LIST: "conv:list",
+  CONV_CREATE: "conv:create",
   CONV_GET: "conv:get",
   CONV_SEARCH: "conv:search",
   PERSONA_LIST: "persona:list",
@@ -85,6 +86,7 @@ export interface IpcInvokeMap {
   };
   [IPC.CHAT_ABORT]: { conversationId: string };
   [IPC.CONV_LIST]: { limit: number; offset: number };
+  [IPC.CONV_CREATE]: { title: string; backend: string; personaId?: string };
   [IPC.CONV_GET]: { conversationId: string };
   [IPC.CONV_SEARCH]: { query: string };
   [IPC.PERSONA_LIST]: void;

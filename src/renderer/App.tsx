@@ -14,6 +14,7 @@ import { DiagnosticBanner } from "./components/DiagnosticBanner";
 import { usePipelines } from "./hooks/usePipelines";
 import {
   getConversation,
+  createConversation,
   setSetting,
   deleteConversation,
   renameConversation,
@@ -109,10 +110,20 @@ function App() {
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleNew = useCallback(() => {
-    setActiveConvId(null);
-    setActiveConvMeta(null);
-  }, []);
+  const handleNew = useCallback(async () => {
+    try {
+      const conv = await createConversation(
+        `Conversation ${new Date().toLocaleDateString()}`,
+        backend,
+        personaId ?? undefined,
+      );
+      setActiveConvId(conv.id);
+      setActiveConvMeta(conv);
+      setRefreshTrigger((n) => n + 1);
+    } catch (err) {
+      console.error("Failed to create conversation:", err);
+    }
+  }, [backend, personaId]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
