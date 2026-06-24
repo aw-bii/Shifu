@@ -1,9 +1,18 @@
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 
 const INSTALL_COMMANDS: Record<string, [string, string[]]> = {
   gemini: ["npm", ["install", "-g", "@google/gemini-cli"]],
   opencode: ["npm", ["install", "-g", "opencode"]],
 };
+
+function canSpawnNpm(): { ok: boolean; error?: string } {
+  try {
+    execSync("npm --version", { stdio: "pipe", timeout: 5000 });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "npm not found in PATH. Install Node.js from https://nodejs.org" };
+  }
+}
 
 export function installBackend(
   id: string,
@@ -13,9 +22,18 @@ export function installBackend(
   if (!cmd)
     return Promise.resolve({ success: false, error: `Unknown backend: ${id}` });
 
+  const check = canSpawnNpm();
+  if (!check.ok) return Promise.resolve({ success: false, error: check.error });
+
   const [binary, args] = cmd;
+  const isWin = process.platform === "win32";
+
   return new Promise((resolve) => {
-    const p = spawn(binary, args, { stdio: "pipe" });
+    const p = spawn(binary, args, {
+      stdio: "pipe",
+      shell: isWin,
+      env: { ...process.env },
+    });
     let stderrOutput = "";
     p.stdout!.on("data", (buf: Buffer) =>
       buf.toString().split("\n").filter(Boolean).forEach(onData),
@@ -32,7 +50,9 @@ export function installBackend(
       resolve({
         success: false,
         error: isPermissionError
-          ? `Permission denied. Try running as administrator${process.platform === "win32" ? " (right-click terminal → Run as Administrator)" : " (sudo npm install -g ...)"}`
+          ? isWin
+            ? `Permission denied. Run "${binary} ${args.join(" ")}" in a terminal opened as Administrator.`
+            : `Permission denied. Try: sudo ${binary} ${args.join(" ")}`
           : `Install failed with exit code ${code}. See output above.`,
       });
     });

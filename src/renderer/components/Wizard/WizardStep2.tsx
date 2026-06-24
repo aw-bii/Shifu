@@ -84,17 +84,26 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">{LABELS[id] ?? id}</span>
-            <button
-              onClick={() => install(id)}
-              disabled={installing[id] || done[id]}
-              className="btn-sm bg-blue-600 text-white hoverable:hover:bg-blue-700 disabled:opacity-50"
-            >
-              {done[id]
-                ? "Installed"
-                : installing[id]
-                  ? "Installing..."
-                  : "Install"}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => install(id)}
+                disabled={installing[id] || done[id]}
+                className="btn-sm bg-blue-600 text-white hoverable:hover:bg-blue-700 disabled:opacity-50"
+              >
+                {done[id]
+                  ? "Installed"
+                  : installing[id]
+                    ? "Installing..."
+                    : "Install"}
+              </button>
+              <button
+                onClick={() => setDone((prev) => ({ ...prev, [id]: true }))}
+                disabled={done[id]}
+                className="btn-sm border border-gray-300 dark:border-gray-600 hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 disabled:opacity-30"
+              >
+                Skip
+              </button>
+            </div>
           </div>
           {(logs[id] ?? []).length > 0 && (
             <pre className="text-xs bg-gray-900 text-gray-300 rounded-lg p-2 max-h-24 overflow-y-auto">
