@@ -31,7 +31,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
     const off = window.ipc.on("wizard:install:line", (line: unknown) =>
       addLine(String(line)),
     );
-    const { success: ok } = await installBackend(id);
+    const { success: ok, error } = await installBackend(id);
     off();
 
     setInstalling((prev) => ({ ...prev, [id]: false }));
@@ -39,7 +39,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
     if (!ok) {
       setErrors((prev) => ({
         ...prev,
-        [id]: "Installation failed. Check your internet connection.",
+        [id]: error ?? "Installation failed. Check your internet connection.",
       }));
     }
   };
