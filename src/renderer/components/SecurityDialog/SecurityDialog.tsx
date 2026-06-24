@@ -51,7 +51,7 @@ export function SecurityDialog({ event, onRespond }: SecurityDialogProps) {
       aria-label={`${event.severity} security alert: ${event.message}`}
     >
       <div
-        className={`max-w-md w-full mx-4 rounded-lg border p-4 shadow-lg ${severityClass}`}
+        className={`max-w-md w-full mx-4 rounded-lg border p-4 shadow-lg motion-safe:animate-scale-in ${severityClass}`}
       >
         <div className="font-semibold mb-1 text-sm uppercase tracking-wide">
           {event.severity} — Security Alert

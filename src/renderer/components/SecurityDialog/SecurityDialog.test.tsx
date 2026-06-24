@@ -45,6 +45,24 @@ describe("SecurityDialog", () => {
     expect(screen.getByText(/Deny/i)).toBeDefined();
   });
 
+  it("uses motion-safe:animate-scale-in class, not bare animate-scale-in", () => {
+    const { container } = render(
+      <SecurityDialog
+        event={{
+          type: "injection_detected",
+          severity: "high",
+          message: "Injection detected",
+          detail: "Found pattern X",
+          source: "claude",
+        }}
+        onRespond={vi.fn()}
+      />,
+    );
+    const card = container.querySelector('[role="dialog"] > div') as HTMLElement;
+    expect(card.classList.contains("motion-safe:animate-scale-in")).toBe(true);
+    expect(card.classList.contains("animate-scale-in")).toBe(false);
+  });
+
   it("calls onRespond with approved=true when approve clicked", () => {
     render(
       <SecurityDialog
