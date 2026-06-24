@@ -67,6 +67,50 @@ describe("stripDangerousEnvKeys", () => {
 });
 
 describe("McpClientManager", () => {
+  describe("addServer validation", () => {
+    afterEach(() => {
+      // clean up any servers added during these tests
+      McpClientManager.getServers().forEach((s) => McpClientManager.removeServer(s.id));
+    });
+
+    it("rejects path-traversal command", () => {
+      expect(() =>
+        McpClientManager.addServer({
+          name: "evil",
+          command: "../../evil.sh",
+          args: [],
+        }),
+      ).toThrow(/unsafe/i);
+    });
+
+    it("rejects shell-injection command", () => {
+      expect(() =>
+        McpClientManager.addServer({
+          name: "evil2",
+          command: "node;rm -rf /",
+          args: [],
+        }),
+      ).toThrow(/unsafe/i);
+    });
+
+    it("accepts safe command names", () => {
+      expect(() =>
+        McpClientManager.addServer({ name: "ok", command: "npx", args: [] }),
+      ).not.toThrow();
+    });
+
+    it("rejects non-string env values", () => {
+      expect(() =>
+        McpClientManager.addServer({
+          name: "bad-env",
+          command: "node",
+          args: [],
+          env: { KEY: 123 as unknown as string },
+        }),
+      ).toThrow(/env/i);
+    });
+  });
+
   afterAll(() => {
     McpClientManager.shutdownAll();
     try {

@@ -7,6 +7,9 @@ import type {
   McpToolCallResult,
 } from "../../shared/types";
 
+// Allowlist: command must be a plain executable name, no path separators or shell metacharacters.
+const SAFE_COMMAND_RE = /^[a-zA-Z0-9_][a-zA-Z0-9_./-]*$/;
+
 interface JsonRpcMessage {
   jsonrpc: "2.0";
   id: string | number;
@@ -112,6 +115,16 @@ export const McpClientManager = {
     args: string[];
     env?: Record<string, string>;
   }): McpServerConfig {
+    if (!SAFE_COMMAND_RE.test(config.command)) {
+      throw new Error(`MCP command contains unsafe characters: ${config.command}`);
+    }
+    if (config.env) {
+      for (const [k, v] of Object.entries(config.env)) {
+        if (typeof k !== "string" || typeof v !== "string") {
+          throw new Error(`MCP env keys and values must be strings`);
+        }
+      }
+    }
     const id = createServerId(config.name);
     const now = Date.now();
     const serverConfig: McpServerConfig = {
