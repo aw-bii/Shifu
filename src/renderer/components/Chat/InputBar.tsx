@@ -135,7 +135,8 @@ export function InputBar({ onSend, onAbort, streaming, disabled }: Props) {
 
         <textarea
           ref={textareaRef}
-          className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-40"
+          className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ maxHeight: 'min(10rem, 40vh)' }}
           rows={1}
           value={value}
           onChange={(e) => setValue(e.target.value)}
