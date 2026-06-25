@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import { MessageBubble } from "./MessageBubble";
 import type { Message } from "../../../shared/types";
 
@@ -11,7 +11,7 @@ interface Props {
   role?: string;
 }
 
-export function MessageList({ messages, streaming, conversationId, id, "aria-labelledby": ariaLabelledBy, role = "log" }: Props) {
+export const MessageList = memo(function MessageList({ messages, streaming, conversationId, id, "aria-labelledby": ariaLabelledBy, role = "log" }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Track which message IDs have been shown. Seeded with all current IDs
@@ -79,4 +79,4 @@ export function MessageList({ messages, streaming, conversationId, id, "aria-lab
       <div ref={bottomRef} />
     </div>
   );
-}
+});
