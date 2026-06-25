@@ -74,15 +74,9 @@ function SingleChatView({
         />
       )}
       <InputBar onSend={handleSend} onAbort={abort} streaming={streaming} />
-      {/* Live region — screen readers announce new assistant content during streaming */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="false"
-        className="sr-only"
-      >
-        {streaming ? (messages[messages.length - 1]?.content ?? "") : ""}
-      </div>
+      <StreamingAnnouncer
+        content={streaming ? (messages[messages.length - 1]?.content ?? "") : ""}
+      />
     </div>
   );
 }
@@ -167,17 +161,21 @@ function PipelineChatView({
       )}
 
       <InputBar onSend={handleSend} onAbort={abort} streaming={streaming} />
-      {/* Live region — screen readers announce new assistant content during streaming */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="false"
-        className="sr-only"
-      >
-        {streaming && streamingStepIndex === activeTabIndex
-          ? (activeMessages[activeMessages.length - 1]?.content ?? "")
-          : ""}
-      </div>
+      <StreamingAnnouncer
+        content={
+          streaming && streamingStepIndex === activeTabIndex
+            ? (activeMessages[activeMessages.length - 1]?.content ?? "")
+            : ""
+        }
+      />
+    </div>
+  );
+}
+
+function StreamingAnnouncer({ content }: { content: string }) {
+  return (
+    <div role="status" aria-live="polite" aria-atomic="false" className="sr-only">
+      {content}
     </div>
   );
 }
