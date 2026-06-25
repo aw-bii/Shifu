@@ -166,3 +166,30 @@ describe("ConvItem long-press rename", () => {
     expect(screen.queryByRole("textbox")).toBeNull();
   });
 });
+
+describe("ConvItem keyboard rename", () => {
+  it("pressing F2 on the button enters rename mode", () => {
+    const conv = {
+      id: "c1",
+      title: "My Conv",
+      backend: "claude",
+      personaId: null,
+      pipelineTemplateId: null,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    render(
+      <ConvItem
+        conversation={conv}
+        active={false}
+        onClick={vi.fn()}
+        onDelete={vi.fn()}
+        onRename={vi.fn()}
+      />
+    );
+    const btn = screen.getByRole("button", { name: /My Conv/i });
+    btn.focus();
+    fireEvent.keyDown(btn, { key: "F2" });
+    expect(screen.getByRole("textbox")).toBeTruthy();
+  });
+});

@@ -70,10 +70,18 @@ export const ConvItem = memo(function ConvItem({
           setEditValue(conversation.title);
           setEditing(true);
         }}
+        onKeyDown={(e) => {
+          if (e.key === "F2") {
+            e.preventDefault();
+            setEditValue(conversation.title);
+            setEditing(true);
+          }
+        }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onTouchMove={onTouchEnd}
         aria-current={active ? "page" : undefined}
+        aria-label={conversation.title}
         className={`flex-1 text-left px-3 py-2 rounded-lg text-sm truncate hoverable:hover:bg-gray-100 dark:hoverable:hover:bg-gray-800 transition-[background-color,transform] duration-100 ease-press active:scale-95 ${
           active ? "bg-gray-200 dark:bg-gray-700 font-medium" : ""
         }`}
