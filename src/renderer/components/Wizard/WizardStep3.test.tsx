@@ -59,3 +59,31 @@ describe("WizardStep3 recheck failure", () => {
     expect(await findByText(/could not verify/i)).toBeTruthy();
   });
 });
+
+describe("WizardStep3 all-signed-in state", () => {
+  it("hides the 'click Check' subtitle when all tools are signed in", () => {
+    render(
+      <WizardStep3
+        statuses={[claudeStatus]}
+        onComplete={vi.fn()}
+        onBack={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByText(/then click check/i),
+    ).toBeNull();
+  });
+
+  it("shows the 'click Check' subtitle when a tool needs auth", () => {
+    render(
+      <WizardStep3
+        statuses={[
+          { id: "gemini", available: true, authenticated: false, loading: false },
+        ]}
+        onComplete={vi.fn()}
+        onBack={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/then click check/i)).toBeTruthy();
+  });
+});

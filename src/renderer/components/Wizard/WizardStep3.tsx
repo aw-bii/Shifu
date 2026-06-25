@@ -57,9 +57,11 @@ export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-sm font-semibold mb-1">Sign in to your AI tools</h2>
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          Open a terminal, run the command for each tool, then click Check.
-        </p>
+        {needsAuth.length > 0 && (
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Open a terminal, run the command for each tool, then click Check.
+          </p>
+        )}
       </div>
       {needsAuth.length === 0 && (
         <div className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
