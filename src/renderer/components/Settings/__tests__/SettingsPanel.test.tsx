@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeAll } from "vitest";
+import { describe, it, expect, vi, beforeAll, beforeEach } from "vitest";
 
 // window.matchMedia is used by the media-query effect that remains separate
 beforeAll(() => {
@@ -41,6 +41,14 @@ vi.mock("../../../ipc", () => ({
 import { SettingsPanel } from "../SettingsPanel";
 
 describe("SettingsPanel mount IPC calls", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetAppVersion.mockResolvedValue("1.0.0");
+    mockGetSetting.mockResolvedValue(null);
+    mockHasKey.mockResolvedValue(false);
+    mockGetProxySettings.mockResolvedValue({ httpProxy: "", httpsProxy: "", noProxy: "" });
+  });
+
   it("all IPC calls resolve and their results render", async () => {
     render(<SettingsPanel onClose={vi.fn()} onReRunWizard={vi.fn()} />);
     await vi.waitFor(() => {
@@ -50,5 +58,19 @@ describe("SettingsPanel mount IPC calls", () => {
       expect(mockGetProxySettings).toHaveBeenCalledTimes(1);
       expect(screen.getByText(/1\.0\.0/)).toBeTruthy();
     });
+  });
+
+  it("renders with defaults when getAppVersion rejects — other fields still load", async () => {
+    mockGetAppVersion.mockRejectedValueOnce(new Error("IPC error"));
+
+    render(<SettingsPanel onClose={vi.fn()} onReRunWizard={vi.fn()} />);
+
+    await vi.waitFor(() => {
+      // theme and key states still loaded even though version failed
+      expect(mockGetSetting).toHaveBeenCalledWith("theme");
+      expect(mockHasKey).toHaveBeenCalledTimes(5);
+    });
+    // No uncaught rejection — component still renders
+    expect(screen.getByText(/theme/i)).toBeTruthy();
   });
 });

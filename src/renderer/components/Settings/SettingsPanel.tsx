@@ -37,11 +37,13 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
   useEffect(() => {
     (async () => {
       const [appVersion, themeSetting, keyResults, proxy] = await Promise.all([
-        getAppVersion(),
-        getSetting("theme"),
+        getAppVersion().catch(() => ""),
+        getSetting("theme").catch(() => null),
         Promise.all(
           API_PROVIDERS.map((p) =>
-            hasKey(p.id).then((exists) => ({ id: p.id, exists })),
+            hasKey(p.id)
+              .then((exists) => ({ id: p.id, exists }))
+              .catch(() => ({ id: p.id, exists: false })),
           ),
         ),
         getProxySettings().catch(() => ({
