@@ -60,20 +60,34 @@ describe("PersonaPanel delete confirmation", () => {
 describe("PersonaPanel close button", () => {
   it("renders a close button when onClose is provided", () => {
     const onClose = vi.fn();
-    render(<PersonaPanel activePersonaId={null} onSelect={vi.fn()} onClose={onClose} />);
+    render(
+      <PersonaPanel
+        activePersonaId={null}
+        onSelect={vi.fn()}
+        onClose={onClose}
+      />,
+    );
     const btn = screen.getByRole("button", { name: /close personas/i });
     expect(btn).toBeTruthy();
   });
 
   it("calls onClose when close button is clicked", () => {
     const onClose = vi.fn();
-    render(<PersonaPanel activePersonaId={null} onSelect={vi.fn()} onClose={onClose} />);
+    render(
+      <PersonaPanel
+        activePersonaId={null}
+        onSelect={vi.fn()}
+        onClose={onClose}
+      />,
+    );
     fireEvent.click(screen.getByRole("button", { name: /close personas/i }));
     expect(onClose).toHaveBeenCalledOnce();
   });
 
   it("does not render a close button when onClose is not provided", () => {
     render(<PersonaPanel activePersonaId={null} onSelect={vi.fn()} />);
-    expect(screen.queryByRole("button", { name: /close personas/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /close personas/i }),
+    ).toBeNull();
   });
 });

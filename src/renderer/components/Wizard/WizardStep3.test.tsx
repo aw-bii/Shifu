@@ -69,16 +69,19 @@ describe("WizardStep3 all-signed-in state", () => {
         onBack={vi.fn()}
       />,
     );
-    expect(
-      screen.queryByText(/then click check/i),
-    ).toBeNull();
+    expect(screen.queryByText(/then click check/i)).toBeNull();
   });
 
   it("shows the 'click Check' subtitle when a tool needs auth", () => {
     render(
       <WizardStep3
         statuses={[
-          { id: "gemini", available: true, authenticated: false, loading: false },
+          {
+            id: "gemini",
+            available: true,
+            authenticated: false,
+            loading: false,
+          },
         ]}
         onComplete={vi.fn()}
         onBack={vi.fn()}

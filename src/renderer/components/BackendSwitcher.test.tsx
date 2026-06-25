@@ -5,8 +5,18 @@ import { BackendSwitcher } from "./BackendSwitcher";
 vi.mock("../hooks/useBackends", () => ({
   useBackends: () => ({
     backends: [
-      { id: "claude", label: "Claude Code", available: true, authenticated: true },
-      { id: "gemini", label: "Gemini CLI", available: true, authenticated: false },
+      {
+        id: "claude",
+        label: "Claude Code",
+        available: true,
+        authenticated: true,
+      },
+      {
+        id: "gemini",
+        label: "Gemini CLI",
+        available: true,
+        authenticated: false,
+      },
     ],
   }),
 }));
