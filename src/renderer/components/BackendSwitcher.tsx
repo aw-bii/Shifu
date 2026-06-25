@@ -1,17 +1,12 @@
 import { memo } from "react";
 import { useBackends } from "../hooks/useBackends";
+import { AUTH_COMMANDS } from "../constants/auth";
 
 interface Props {
   value: string;
   onChange: (id: string) => void;
   refreshTrigger?: number;
 }
-
-const AUTH_COMMANDS: Record<string, string> = {
-  claude: "claude login",
-  gemini: "gemini auth login",
-  opencode: "opencode auth",
-};
 
 export const BackendSwitcher = memo(function BackendSwitcher({
   value,
@@ -23,7 +18,7 @@ export const BackendSwitcher = memo(function BackendSwitcher({
   const needsAuth = selected?.available && !selected?.authenticated;
 
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="relative">
       <select
         className="text-xs px-2 py-1 rounded border border-border-strong bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
         value={value}
@@ -43,7 +38,7 @@ export const BackendSwitcher = memo(function BackendSwitcher({
       {needsAuth && (
         <span
           role="alert"
-          className="text-xs text-amber-600 dark:text-amber-400"
+          className="absolute left-0 top-full mt-0.5 text-xs text-amber-600 dark:text-amber-400 whitespace-nowrap"
         >
           Not signed in — run{" "}
           <code className="font-mono bg-bubble px-0.5 rounded">

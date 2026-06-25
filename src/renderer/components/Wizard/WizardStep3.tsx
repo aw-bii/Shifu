@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { CheckCircle } from "@phosphor-icons/react";
 import { probeBackend } from "../../ipc";
-
-const AUTH_COMMANDS: Record<string, string> = {
-  claude: "claude login",
-  gemini: "gemini auth login",
-  opencode: "opencode auth",
-};
+import { AUTH_COMMANDS } from "../../constants/auth";
 
 const BACKEND_LABELS: Record<string, string> = {
   claude: "Claude Code",
