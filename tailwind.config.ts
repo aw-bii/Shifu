@@ -6,6 +6,23 @@ export default {
   content: ["./src/renderer/**/*.{html,tsx,ts}"],
   theme: {
     extend: {
+      colors: {
+        primary: "rgb(var(--c-primary) / <alpha-value>)",
+        "primary-dark": "rgb(var(--c-primary-dark) / <alpha-value>)",
+        "primary-ghost": "rgb(var(--c-primary-ghost) / <alpha-value>)",
+        "on-primary": "rgb(var(--c-on-primary) / <alpha-value>)",
+        danger: "rgb(var(--c-danger) / <alpha-value>)",
+        "danger-dark": "rgb(var(--c-danger-dark) / <alpha-value>)",
+        "danger-subtle": "rgb(var(--c-danger-subtle) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        "surface-subtle": "rgb(var(--c-surface-subtle) / <alpha-value>)",
+        bubble: "rgb(var(--c-bubble) / <alpha-value>)",
+        "bubble-strong": "rgb(var(--c-bubble-strong) / <alpha-value>)",
+        border: "rgb(var(--c-border) / <alpha-value>)",
+        "border-strong": "rgb(var(--c-border-strong) / <alpha-value>)",
+        "text-base": "rgb(var(--c-text-base) / <alpha-value>)",
+        "text-muted": "rgb(var(--c-text-muted) / <alpha-value>)",
+      },
       transitionTimingFunction: {
         press: "cubic-bezier(0.23, 1, 0.32, 1)",
         drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
@@ -41,7 +58,7 @@ export default {
               fontSize: "0.85em",
               fontFamily:
                 'ui-monospace, "Cascadia Code", "JetBrains Mono", "Fira Code", monospace',
-              backgroundColor: "rgb(243 244 246)", // gray-100
+              backgroundColor: "rgb(var(--c-bubble))",
               padding: "0.15em 0.35em",
               borderRadius: "0.25rem",
               fontWeight: "400",
@@ -62,7 +79,7 @@ export default {
         invert: {
           css: {
             code: {
-              backgroundColor: "rgb(31 41 55)", // gray-800
+              backgroundColor: "rgb(var(--c-bubble))",
             },
           },
         },
