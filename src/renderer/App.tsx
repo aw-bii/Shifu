@@ -179,8 +179,16 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-      <DiagnosticBanner />
+    <>
+      {/* Skip to main content link — only visible on keyboard focus */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-blue-600 focus:text-white focus:text-sm focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+      <div className="flex h-screen overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+        <DiagnosticBanner />
       {viewportLg ? (
         <Sidebar
           collapsed={sidebarCollapsed}
@@ -382,7 +390,7 @@ function App() {
           </button>
         </nav>
 
-        <main className="flex flex-1 min-h-0">
+        <main id="main-content" className="flex flex-1 min-h-0">
           {!activeConvId && mode === "single" ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
               <h2 className="text-sm font-semibold mb-2">
@@ -481,6 +489,7 @@ function App() {
         />
       )}
     </div>
+    </>
   );
 }
 

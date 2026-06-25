@@ -15,6 +15,13 @@
   [role="button"]:not(:disabled) {
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* Visible focus ring for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
