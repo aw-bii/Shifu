@@ -7,6 +7,12 @@ interface Props {
   refreshTrigger?: number;
 }
 
+const AUTH_COMMANDS: Record<string, string> = {
+  claude: "claude login",
+  gemini: "gemini auth login",
+  opencode: "opencode auth",
+};
+
 export const BackendSwitcher = memo(function BackendSwitcher({
   value,
   onChange,
@@ -41,7 +47,7 @@ export const BackendSwitcher = memo(function BackendSwitcher({
         >
           Not signed in — run{" "}
           <code className="font-mono bg-gray-100 dark:bg-gray-800 px-0.5 rounded">
-            {value} auth login
+            {AUTH_COMMANDS[value] ?? `${value} auth login`}
           </code>{" "}
           first
         </span>

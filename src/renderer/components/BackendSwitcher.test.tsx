@@ -21,5 +21,6 @@ describe("BackendSwitcher", () => {
     render(<BackendSwitcher value="gemini" onChange={vi.fn()} />);
     expect(screen.getByRole("alert")).toBeTruthy();
     expect(screen.getByRole("alert").textContent).toMatch(/not signed in/i);
+    expect(screen.getByRole("alert").textContent).toMatch(/gemini auth login/i);
   });
 });
