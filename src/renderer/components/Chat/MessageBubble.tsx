@@ -21,6 +21,15 @@ function safeUrl(url: string): string | null {
 }
 
 const attachmentCache = new Map<string, Attachment[]>();
+const MAX_CACHE_SIZE = 100;
+
+function cacheAttachments(messageId: string, atts: Attachment[]) {
+  if (attachmentCache.size >= MAX_CACHE_SIZE) {
+    const first = attachmentCache.keys().next().value;
+    if (first !== undefined) attachmentCache.delete(first);
+  }
+  attachmentCache.set(messageId, atts);
+}
 
 export function clearAttachmentCache() {
   attachmentCache.clear();
@@ -43,7 +52,7 @@ export const MessageBubble = memo(function MessageBubble({ message }: Props) {
     }
     listAttachments(message.id)
       .then((atts) => {
-        attachmentCache.set(message.id, atts);
+        cacheAttachments(message.id, atts);
         setAttachments(atts);
       })
       .catch(() => {});
