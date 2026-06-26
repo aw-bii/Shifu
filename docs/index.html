@@ -210,6 +210,30 @@ body {
 }
 
 
+/* ── BACKENDS ───────────────────────────── */
+.bks {
+  padding: 64px 0; margin-top: 72px;
+  border-top: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+}
+.bks-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.bks-col-lbl {
+  font-size: 11px; font-weight: 700; color: var(--ink-3);
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px;
+}
+.bk-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--bdr);
+}
+.bk-row:last-child { border-bottom: none; }
+.bk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.bk-name { font-size: 14px; font-weight: 600; color: var(--ink); flex: 1; }
+.bk-tag {
+  font-size: 11px; font-weight: 600; color: var(--ink-3);
+  background: var(--surf-2); border: 1px solid var(--bdr);
+  border-radius: var(--r6); padding: 2px 8px;
+}
+.bk-tag.hi { color: var(--blue); background: var(--blue-bg); border-color: rgba(37,99,235,.15); }
+
 /* ── FEATURES ───────────────────────────── */
 .feats {}
 .feat { padding: 96px 0; border-bottom: 1px solid var(--bdr); }
@@ -384,6 +408,7 @@ body {
 
 /* ── RESPONSIVE ─────────────────────────── */
 @media (max-width: 900px) {
+  .bks-inner { grid-template-columns: 1fr; gap: 32px; }
   .feat-grid { grid-template-columns: 1fr; gap: 40px; }
   .feat-flip .feat-grid { direction: ltr; }
   .setup-g { grid-template-columns: 1fr; gap: 40px; }
@@ -510,6 +535,59 @@ body {
   </div>
 </section>
 
+<!-- BACKENDS -->
+<div class="bks rv">
+  <div class="c">
+    <div class="bks-inner">
+      <div>
+        <div class="bks-col-lbl">CLI tools</div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#d97a31"></span>
+          <span class="bk-name">Claude Code</span>
+          <span class="bk-tag hi">bundled</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#4285f4"></span>
+          <span class="bk-name">Gemini CLI</span>
+          <span class="bk-tag">setup wizard</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#2eb88a"></span>
+          <span class="bk-name">Opencode</span>
+          <span class="bk-tag">setup wizard</span>
+        </div>
+      </div>
+      <div>
+        <div class="bks-col-lbl">Direct API</div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#cc785c"></span>
+          <span class="bk-name">Claude API</span>
+          <span class="bk-tag">API key</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#4285f4"></span>
+          <span class="bk-name">Gemini API</span>
+          <span class="bk-tag">API key</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#10a37f"></span>
+          <span class="bk-name">OpenAI</span>
+          <span class="bk-tag">API key</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#6366f1"></span>
+          <span class="bk-name">OpenRouter</span>
+          <span class="bk-tag">API key</span>
+        </div>
+        <div class="bk-row">
+          <span class="bk-dot" style="background:#888"></span>
+          <span class="bk-name">Ollama</span>
+          <span class="bk-tag">local</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- FEATURES -->
 <div class="feats">
@@ -521,7 +599,7 @@ body {
         <div>
           <span class="feat-ey">Multi-backend</span>
           <h2 class="feat-h2">Switch AI models in a single click</h2>
-          <p class="feat-body">You're already paying for Claude and Gemini. MyRA puts them in one window. Same interface, same history. Just pick the model you want.</p>
+          <p class="feat-body">Eight backends, one window. Claude Code, Gemini CLI, Opencode, OpenAI, OpenRouter, Ollama, and both Anthropic and Google direct APIs. Same interface, same history. Just pick the model you want.</p>
         </div>
         <div>
           <div class="fmock">
@@ -529,7 +607,9 @@ body {
               <span class="fmock-lbl">Model</span>
               <span class="chip on" style="font-size:11px;padding:4px 11px">Claude</span>
               <span class="chip" style="font-size:11px;padding:4px 11px">Gemini</span>
-              <span class="chip" style="font-size:11px;padding:4px 11px">Opencode</span>
+              <span class="chip" style="font-size:11px;padding:4px 11px">OpenAI</span>
+              <span class="chip" style="font-size:11px;padding:4px 11px">Ollama</span>
+              <span class="chip" style="font-size:11px;padding:4px 11px">+4</span>
             </div>
             <div class="fmock-msgs">
               <div class="fmock-q">What metrics should I benchmark before a Series B?</div>
