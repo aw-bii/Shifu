@@ -7,6 +7,9 @@
   --c-danger: 239 68 68;
   --c-danger-dark: 220 38 38;
   --c-danger-subtle: 254 226 226;
+  --c-danger-muted: 248 113 113;
+  --c-surface-dark: 17 24 39;
+  --c-surface-darker: 3 7 18;
   --c-surface: 255 255 255;
   --c-surface-subtle: 249 250 251;
   --c-bubble: 243 244 246;
@@ -19,6 +22,9 @@
 .dark {
   --c-primary-ghost: 30 58 138;
   --c-danger-subtle: 127 29 29;
+  --c-danger-muted: 248 113 113;
+  --c-surface-dark: 17 24 39;
+  --c-surface-darker: 3 7 18;
   --c-surface: 17 24 39;
   --c-surface-subtle: 3 7 18;
   --c-bubble: 31 41 55;
