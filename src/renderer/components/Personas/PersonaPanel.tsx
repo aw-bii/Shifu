@@ -257,7 +257,7 @@ export function PersonaPanel({ activePersonaId, onSelect, onClose }: Props) {
               {p.isDefault && (
                 <div className="text-xs text-primary">default</div>
               )}
-              <div className="text-xs text-text-muted truncate max-w-[140px]">
+              <div className="text-xs text-text-muted truncate max-w-[75%]">
                 {p.systemPrompt || "No system prompt"}
               </div>
             </div>
