@@ -67,7 +67,7 @@ export default {
               fontWeight: "400",
             },
             pre: {
-              backgroundColor: "rgb(17 24 39)", // gray-900
+              backgroundColor: "rgb(var(--c-surface-dark) / <alpha-value>)",
               borderRadius: "0.5rem",
               fontSize: "0.82em",
             },

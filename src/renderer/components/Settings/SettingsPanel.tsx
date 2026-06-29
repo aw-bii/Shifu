@@ -159,7 +159,7 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
                           await deleteKey(p.id);
                           setKeyStates((prev) => ({ ...prev, [p.id]: false }));
                         }}
-                        className="btn-sm border border-red-400 text-red-500 hoverable:hover:bg-red-50 dark:hoverable:hover:bg-red-950 text-xs px-2"
+                        className="btn-sm border border-danger-muted text-danger hoverable:hover:bg-danger-subtle text-xs px-2"
                       >
                         Remove
                       </button>

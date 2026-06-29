@@ -188,7 +188,7 @@ export function PersonaPanel({ activePersonaId, onSelect, onClose }: Props) {
                 className="text-sm font-medium text-text-base"
               >
                 {v.label}
-                {v.required && <span className="text-red-500 ml-0.5">*</span>}
+                {v.required && <span className="text-danger ml-0.5">*</span>}
               </label>
               <input
                 id={`var-${v.name}`}
@@ -276,7 +276,7 @@ export function PersonaPanel({ activePersonaId, onSelect, onClose }: Props) {
             {confirmDeleteId === p.id ? (
               <button
                 onClick={() => { remove(p.id); setConfirmDeleteId(null); }}
-                className="text-xs text-red-500 hoverable:hover:text-red-700 px-1 font-medium"
+                className="text-xs text-danger hoverable:hover:text-danger-dark px-1 font-medium"
                 aria-label={`Confirm delete persona ${p.name}`}
               >
                 Confirm?
@@ -284,7 +284,7 @@ export function PersonaPanel({ activePersonaId, onSelect, onClose }: Props) {
             ) : (
               <button
                 onClick={() => setConfirmDeleteId(p.id)}
-                className="text-xs text-red-400 hoverable:hover:text-red-600 px-1"
+                className="text-xs text-danger-muted hoverable:hover:text-danger px-1"
                 aria-label={`Delete persona ${p.name}`}
               >
                 Delete

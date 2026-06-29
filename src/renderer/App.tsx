@@ -201,7 +201,7 @@ function App() {
         <>
           {mobileSidebarOpen && (
             <div
-              className="fixed inset-0 z-30 bg-black/30"
+              className="fixed inset-0 z-30 bg-surface-darker/50"
               onClick={() => setMobileSidebarOpen(false)}
             />
           )}
@@ -246,7 +246,7 @@ function App() {
       <div className="flex flex-col flex-1 min-w-0 overflow-x-hidden">
         <UpdateBanner />
         {!online && (
-          <div className="px-4 py-1 bg-yellow-100 dark:bg-yellow-900 text-xs text-yellow-800 dark:text-yellow-200 border-b border-yellow-200 dark:border-yellow-700">
+          <div className="px-4 py-1 bg-danger-subtle text-xs text-danger border-b border-danger/30">
             No internet connection. Some features require internet access.
           </div>
         )}

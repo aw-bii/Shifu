@@ -172,7 +172,7 @@ export function PipelinePanel({ activeTemplateId, onSelect, onClose }: Props) {
               </button>
               <button
                 onClick={() => remove(t.id)}
-                className="text-xs text-red-400 hoverable:hover:text-red-600 px-1"
+                className="text-xs text-danger-muted hoverable:hover:text-danger px-1"
                 aria-label={`Delete pipeline ${t.name}`}
               >
                 Delete
@@ -259,7 +259,7 @@ export function PipelinePanel({ activeTemplateId, onSelect, onClose }: Props) {
                 <button
                   onClick={() => removeStep(idx)}
                   disabled={editing.steps.length <= 2}
-                  className="text-xs text-red-400 hoverable:hover:text-red-600 px-1 disabled:opacity-30"
+                  className="text-xs text-danger-muted hoverable:hover:text-danger px-1 disabled:opacity-30"
                 >
                   ×
                 </button>
