@@ -160,26 +160,38 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
                   </p>
                 ) : (
                   <div className="flex gap-1">
-                    <input
-                      type="password"
-                      className="flex-1 text-xs border rounded px-2 py-1 bg-surface border-border-strong"
-                      placeholder={
-                        keyStates[p.id] ? "Key set — blank to delete" : "sk-..."
-                      }
-                      value={apiKeys[p.id] ?? ""}
-                      onChange={(e) =>
-                        setApiKeys((prev) => ({
-                          ...prev,
-                          [p.id]: e.target.value,
-                        }))
-                      }
-                    />
-                    <button
-                      onClick={() => handleSaveKey(p.id)}
-                      className="btn-sm bg-primary text-on-primary hoverable:hover:bg-primary-dark text-xs px-2"
-                    >
-                      Save
-                    </button>
+                    {keyStates[p.id] ? (
+                      <button
+                        onClick={async () => {
+                          await deleteKey(p.id);
+                          setKeyStates((prev) => ({ ...prev, [p.id]: false }));
+                        }}
+                        className="btn-sm border border-red-400 text-red-500 hoverable:hover:bg-red-50 dark:hoverable:hover:bg-red-950 text-xs px-2"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <>
+                        <input
+                          type="password"
+                          className="flex-1 text-xs border rounded px-2 py-1 bg-surface border-border-strong"
+                          placeholder="sk-..."
+                          value={apiKeys[p.id] ?? ""}
+                          onChange={(e) =>
+                            setApiKeys((prev) => ({
+                              ...prev,
+                              [p.id]: e.target.value,
+                            }))
+                          }
+                        />
+                        <button
+                          onClick={() => handleSaveKey(p.id)}
+                          className="btn-sm bg-primary text-on-primary hoverable:hover:bg-primary-dark text-xs px-2"
+                        >
+                          Save
+                        </button>
+                      </>
+                    )}
                     <button
                       onClick={() => handleTest(p.id)}
                       disabled={testing[p.id]}
