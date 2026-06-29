@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useMessages } from "../../hooks/useMessages";
 import { usePipelineMessages } from "../../hooks/usePipelineMessages";
 import { MessageList } from "./MessageList";
 import { InputBar } from "./InputBar";
+import { ErrorToast } from "./ErrorToast";
 import type { Attachment, PipelineTemplate } from "../../../shared/types";
 
 interface Props {
@@ -55,14 +56,19 @@ function SingleChatView({
   bottomBar,
 }: Omit<Props, "pipelineTemplate">) {
   const { messages, streaming, send, abort } = useMessages(conversationId);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const handleSend = async (
     message: string,
     _attachments: Attachment[],
     messageId: string,
   ) => {
-    const newId = await send(message, backend, personaId, messageId, model);
-    if (!conversationId && newId) onNewConversation(newId);
+    try {
+      const newId = await send(message, backend, personaId, messageId, model);
+      if (!conversationId && newId) onNewConversation(newId);
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : "Failed to send message");
+    }
   };
 
   return (
@@ -80,6 +86,11 @@ function SingleChatView({
         />
       )}
       {bottomBar}
+      {sendError && (
+        <div className="px-4 pt-2">
+          <ErrorToast message={sendError} onDismiss={() => setSendError(null)} />
+        </div>
+      )}
       <InputBar onSend={handleSend} onAbort={abort} streaming={streaming} />
       <StreamingAnnouncer
         content={streaming ? (messages[messages.length - 1]?.content ?? "") : ""}
