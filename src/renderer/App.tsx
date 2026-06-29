@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { SetupWizard } from "./components/Wizard/SetupWizard";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { ChatView } from "./components/Chat/ChatView";
@@ -56,6 +56,7 @@ function App() {
   const [settingsSection, setSettingsSection] = useState<SettingsSection>("settings");
   const [sidebarCollapsed, toggleSidebarCollapsed] = useSidebarCollapsed();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const mobileSidebarRef = useRef<HTMLDivElement>(null);
   const [viewportLg, setViewportLg] = useState(
     () => window.matchMedia("(min-width: 1024px)").matches
   );
@@ -203,9 +204,12 @@ function App() {
             <div
               className="fixed inset-0 z-30 bg-surface-darker/50"
               onClick={() => setMobileSidebarOpen(false)}
+              onKeyDown={(e) => { if (e.key === "Escape") setMobileSidebarOpen(false); }}
+              role="presentation"
             />
           )}
           <div
+            ref={mobileSidebarRef}
             className={`fixed left-0 top-0 z-40 h-full transition-transform duration-200 ease-drawer ${
               mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }`}
