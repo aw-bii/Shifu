@@ -33,7 +33,7 @@ export function Sidebar({
         <span className="font-semibold text-sm">MyRA</span>
         <button
           onClick={onNew}
-          className="btn-sm bg-primary text-on-primary hoverable:hover:bg-primary-dark"
+          className="btn-sm bg-primary text-on-primary hoverable:hover:bg-primary-dark active:scale-95 transition-transform duration-100 ease-press"
         >
           + New
         </button>

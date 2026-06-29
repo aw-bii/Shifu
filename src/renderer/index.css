@@ -77,19 +77,14 @@
 }
 
 @layer components {
-  /* btn-sm: toolbar buttons, panel header "+ New" buttons */
   .btn-sm {
-    @apply text-xs px-2 py-1 rounded-md transition-transform duration-100 ease-press active:scale-95;
+    @apply text-xs px-2 py-1 rounded-md;
   }
-
-  /* btn-md: form action buttons (Save, Cancel, Recheck) */
   .btn-md {
-    @apply text-sm px-3 py-1.5 rounded-lg transition-transform duration-100 ease-press active:scale-95;
+    @apply text-sm px-3 py-1.5 rounded-lg;
   }
-
-  /* btn-lg: full-width wizard CTAs (Next, Continue, Finish) */
   .btn-lg {
-    @apply w-full text-sm px-4 py-2 rounded-xl font-medium transition-transform duration-100 ease-press active:scale-95;
+    @apply w-full text-sm px-4 py-2 rounded-xl font-medium;
   }
 }
 
