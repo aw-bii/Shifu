@@ -143,6 +143,7 @@ export function InputBar({ onSend, onAbort, streaming, disabled }: Props) {
           onKeyDown={onKeyDown}
           placeholder="Message..."
           disabled={isDisabled}
+          aria-label="Message input"
         />
         {streaming ? (
           <button

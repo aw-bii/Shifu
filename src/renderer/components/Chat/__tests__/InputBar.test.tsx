@@ -14,6 +14,14 @@ vi.mock("../../hooks/useAttachments", () => ({
 
 import { InputBar } from "../InputBar";
 
+describe("InputBar accessibility", () => {
+  it("textarea has an accessible name", () => {
+    render(<InputBar onSend={vi.fn()} onAbort={vi.fn()} streaming={false} />);
+    const textarea = screen.getByRole("textbox");
+    expect(textarea).toHaveAccessibleName();
+  });
+});
+
 describe("InputBar Send/Stop", () => {
   it("shows Send button when not streaming", () => {
     render(<InputBar onSend={vi.fn()} onAbort={vi.fn()} streaming={false} />);
