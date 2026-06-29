@@ -29,6 +29,31 @@ describe("seedDefaults", () => {
       "defaults_seeded",
       "true",
     );
+
+    // Verify Coder persona args
+    expect(ConvStore.createPersona).toHaveBeenNthCalledWith(1, {
+      name: "Coder",
+      systemPrompt:
+        "You are an expert software engineer. Be concise, use code blocks, prefer working solutions over explanations.",
+      isDefault: true,
+    });
+
+    // Verify Explainer persona args
+    expect(ConvStore.createPersona).toHaveBeenNthCalledWith(2, {
+      name: "Explainer",
+      systemPrompt:
+        "You are a patient teacher. Explain concepts clearly using plain language and examples. Avoid jargon.",
+      isDefault: false,
+    });
+
+    // Verify pipeline template args
+    expect(ConvStore.createPipelineTemplate).toHaveBeenCalledWith(
+      "Draft → Review",
+      [
+        { stepOrder: 0, backendId: "claude", personaId: null },
+        { stepOrder: 1, backendId: "claude", personaId: null },
+      ],
+    );
   });
 
   it("does nothing when already seeded", () => {
