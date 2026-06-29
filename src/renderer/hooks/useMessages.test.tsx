@@ -1,144 +1,48 @@
 import { describe, it, expect } from "vitest";
+import { applyChunk } from "./useMessages";
+import type { Message } from "../../shared/types";
 
-// We'll test the chunk-handling logic in isolation by simulating the
-// setMessages functional updater pattern.
+const makeMsg = (overrides: Partial<Message>): Message => ({
+  id: "x",
+  conversationId: "conv-1",
+  role: "assistant",
+  content: "",
+  backend: "claude",
+  stepIndex: null,
+  createdAt: 0,
+  ...overrides,
+});
 
-describe("useMessages chunk handler logic", () => {
+describe("applyChunk", () => {
   it("appends text chunk content to assistant placeholder", () => {
-    let state = [
-      {
-        id: "u1",
-        role: "user" as const,
-        content: "hello",
-        conversationId: "conv-1",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
-      {
-        id: "a1",
-        role: "assistant" as const,
-        content: "",
-        conversationId: "conv-1",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
+    const ref = { current: "" };
+    const state: Message[] = [
+      makeMsg({ id: "u1", role: "user", content: "hello" }),
+      makeMsg({ id: "a1", role: "assistant", content: "" }),
     ];
-    const applyChunk = (chunk: {
-      type: string;
-      content: string;
-      conversationId: string;
-    }) => {
-      state = state.map((m, i) => {
-        if (i !== state.length - 1 || m.role !== "assistant") return m;
-        if (
-          m.conversationId !== chunk.conversationId &&
-          m.conversationId !== ""
-        )
-          return m;
-        if (chunk.type === "text")
-          return {
-            ...m,
-            content: m.content + chunk.content,
-            conversationId: chunk.conversationId,
-          };
-        if (chunk.type === "error")
-          return {
-            ...m,
-            content: `⚠ Error: ${chunk.content}`,
-            conversationId: chunk.conversationId,
-          };
-        return m;
-      });
-      return state;
-    };
-
-    applyChunk({ type: "text", content: "Hi!", conversationId: "conv-1" });
-    expect(state[1].content).toBe("Hi!");
+    const next = applyChunk(state, { type: "text", content: "Hi!", conversationId: "conv-1" }, ref);
+    expect(next[1].content).toBe("Hi!");
+    expect(ref.current).toBe("Hi!");
   });
 
   it("renders error chunk as visible error message", () => {
-    let state = [
-      {
-        id: "u1",
-        role: "user" as const,
-        content: "hello",
-        conversationId: "conv-1",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
-      {
-        id: "a1",
-        role: "assistant" as const,
-        content: "",
-        conversationId: "conv-1",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
+    const ref = { current: "" };
+    const state: Message[] = [
+      makeMsg({ id: "u1", role: "user", content: "hello" }),
+      makeMsg({ id: "a1", role: "assistant", content: "" }),
     ];
-    const last = state[state.length - 1];
-    if (
-      last.role === "assistant" &&
-      (last.conversationId === "conv-1" || last.conversationId === "")
-    ) {
-      state = [
-        ...state.slice(0, -1),
-        {
-          ...last,
-          content: "⚠ Error: spawn claude ENOENT",
-          conversationId: "conv-1",
-        },
-      ];
-    }
-    expect(state[1].content).toBe("⚠ Error: spawn claude ENOENT");
-    expect(state[1].role).toBe("assistant");
+    const next = applyChunk(state, { type: "error", content: "spawn claude ENOENT", conversationId: "conv-1" }, ref);
+    expect(next[1].content).toBe("⚠ Error: spawn claude ENOENT");
   });
 
   it("falls back to matching placeholder with empty conversationId for new conversations", () => {
-    let state = [
-      {
-        id: "u1",
-        role: "user" as const,
-        content: "hello",
-        conversationId: "",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
-      {
-        id: "a1",
-        role: "assistant" as const,
-        content: "",
-        conversationId: "",
-        backend: "claude",
-        stepIndex: null,
-        createdAt: 0,
-      },
+    const ref = { current: "" };
+    const state: Message[] = [
+      makeMsg({ id: "u1", role: "user", content: "hello", conversationId: "" }),
+      makeMsg({ id: "a1", role: "assistant", content: "", conversationId: "" }),
     ];
-    const chunk = {
-      type: "text",
-      content: "Hi!",
-      conversationId: "conv-new-uuid",
-    };
-    const last = state[state.length - 1];
-    if (
-      last.role === "assistant" &&
-      (last.conversationId === chunk.conversationId ||
-        last.conversationId === "")
-    ) {
-      state = [
-        ...state.slice(0, -1),
-        {
-          ...last,
-          content: chunk.content,
-          conversationId: chunk.conversationId,
-        },
-      ];
-    }
-    expect(state[1].content).toBe("Hi!");
-    expect(state[1].conversationId).toBe("conv-new-uuid");
+    const next = applyChunk(state, { type: "text", content: "Hi!", conversationId: "conv-new-uuid" }, ref);
+    expect(next[1].content).toBe("Hi!");
+    expect(next[1].conversationId).toBe("conv-new-uuid");
   });
 });
