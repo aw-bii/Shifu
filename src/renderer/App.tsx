@@ -10,6 +10,7 @@ import { UpdateBanner } from "./components/UpdateBanner";
 import { DiagnosticBanner } from "./components/DiagnosticBanner";
 import { usePipelines } from "./hooks/usePipelines";
 import { useSidebarCollapsed } from "./hooks/useSidebarCollapsed";
+import { useFocusTrap } from "./hooks/useFocusTrap";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import {
   getConversation,
@@ -60,6 +61,7 @@ function App() {
   const [viewportLg, setViewportLg] = useState(
     () => window.matchMedia("(min-width: 1024px)").matches
   );
+  useFocusTrap(mobileSidebarRef, mobileSidebarOpen && !viewportLg, !mobileSidebarOpen);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [backendRefresh, setBackendRefresh] = useState(0);
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
