@@ -1,7 +1,7 @@
 import { SettingsPanel } from "./SettingsPanel";
 import { PersonaPanel } from "../Personas/PersonaPanel";
 import { PipelinePanel } from "../Pipelines/PipelinePanel";
-import { CronPanel } from "../Sidebar/CronPanel";
+import { CronPanel } from "../../panels/CronPanel/CronPanel";
 import { McpPanel } from "../Sidebar/McpPanel";
 import { PluginPanel } from "../Sidebar/PluginPanel";
 import type { PipelineTemplate } from "../../../shared/types";
