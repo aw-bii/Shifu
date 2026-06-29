@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from "electron";
 import path from "path";
 import os from "os";
 import { initDb, getDb } from "./store/db";
+import { seedDefaults } from "./store/defaults";
 import { registerIpcHandlers } from "./ipc";
 import { initUpdater } from "./updater";
 import { CronEngine } from "./scheduler/cron-engine";
@@ -132,6 +133,7 @@ function createWindow(): BrowserWindow {
 app.whenReady().then(() => {
   const userDataPath = app.getPath("userData");
   initDb(`${userDataPath}/conversations.db`);
+  seedDefaults();
 
   const win = createWindow();
   registerIpcHandlers(win);
