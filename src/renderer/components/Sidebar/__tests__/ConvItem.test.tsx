@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ConvItem } from "../ConvItem";
 import type { Conversation } from "../../../../shared/types";
 
@@ -191,5 +192,34 @@ describe("ConvItem keyboard rename", () => {
     btn.focus();
     fireEvent.keyDown(btn, { key: "F2" });
     expect(screen.getByRole("textbox")).toBeTruthy();
+  });
+});
+
+const baseConv = { id: "conv-1", title: "Test Conversation", backend: "claude", createdAt: Date.now(), updatedAt: Date.now(), pipelineTemplateId: null, personaId: null };
+
+describe("ConvItem delete confirmation", () => {
+  it("shows confirm state on first delete click, does not call onDelete", async () => {
+    const onDelete = vi.fn();
+    render(<ConvItem conversation={baseConv} active={false} onClick={vi.fn()} onDelete={onDelete} onRename={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: /delete conversation/i }));
+    expect(screen.getByRole("button", { name: /confirm delete/i })).toBeTruthy();
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it("calls onDelete after confirmation click", async () => {
+    const onDelete = vi.fn();
+    render(<ConvItem conversation={baseConv} active={false} onClick={vi.fn()} onDelete={onDelete} onRename={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: /delete conversation/i }));
+    await userEvent.click(screen.getByRole("button", { name: /confirm delete/i }));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledWith("conv-1");
+  });
+
+  it("resets confirm state when conversation id changes", async () => {
+    const onDelete = vi.fn();
+    const { rerender } = render(<ConvItem conversation={baseConv} active={false} onClick={vi.fn()} onDelete={onDelete} onRename={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: /delete conversation/i }));
+    rerender(<ConvItem conversation={{ ...baseConv, id: "conv-2" }} active={false} onClick={vi.fn()} onDelete={onDelete} onRename={vi.fn()} />);
+    expect(screen.queryByRole("button", { name: /confirm delete/i })).toBeNull();
   });
 });

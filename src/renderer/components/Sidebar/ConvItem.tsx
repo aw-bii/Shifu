@@ -1,5 +1,5 @@
-import { memo, useState, useRef } from "react";
-import { Trash, ArrowsSplit } from "@phosphor-icons/react";
+import { memo, useState, useRef, useEffect } from "react";
+import { Trash, ArrowsSplit, Check, X } from "@phosphor-icons/react";
 import type { Conversation } from "../../../shared/types";
 
 interface Props {
@@ -19,7 +19,12 @@ export const ConvItem = memo(function ConvItem({
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(conversation.title);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const isPipeline = conversation.pipelineTemplateId !== null;
+
+  useEffect(() => {
+    setConfirmDelete(false);
+  }, [conversation.id]);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const onTouchStart = () => {
@@ -99,17 +104,44 @@ export const ConvItem = memo(function ConvItem({
           <span>{new Date(conversation.updatedAt).toLocaleDateString()}</span>
         </div>
       </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(conversation.id);
-        }}
-        className="touch-target opacity-0 hoverable:group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1 text-text-muted hoverable:hover:text-danger transition-[opacity,transform] duration-100 ease-press active:scale-95"
-        aria-label="Delete conversation"
-        title="Delete"
-      >
-        <Trash size={16} />
-      </button>
+      {confirmDelete ? (
+        <>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(conversation.id);
+            }}
+            className="touch-target p-1 text-danger transition-[opacity,transform] duration-100 ease-press active:scale-95"
+            aria-label="Confirm delete"
+            title="Confirm delete"
+          >
+            <Check size={16} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setConfirmDelete(false);
+            }}
+            className="touch-target p-1 text-text-muted hoverable:hover:text-text-base transition-[opacity,transform] duration-100 ease-press active:scale-95"
+            aria-label="Cancel delete"
+            title="Cancel"
+          >
+            <X size={16} />
+          </button>
+        </>
+      ) : (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setConfirmDelete(true);
+          }}
+          className="touch-target opacity-0 hoverable:group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1 text-text-muted hoverable:hover:text-danger transition-[opacity,transform] duration-100 ease-press active:scale-95"
+          aria-label="Delete conversation"
+          title="Delete"
+        >
+          <Trash size={16} />
+        </button>
+      )}
     </div>
   );
 });
