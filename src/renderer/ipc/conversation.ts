@@ -5,8 +5,8 @@ import { ipcInvoke } from "./index";
 export async function listConversations(limit = 50, offset = 0): Promise<Conversation[]> {
   return ipcInvoke<Conversation[]>(IPC.CONV_LIST, { limit, offset });
 }
-export async function createConversation(title: string, backend: string, personaId?: string): Promise<Conversation> {
-  return ipcInvoke<Conversation>(IPC.CONV_CREATE, { title, backend, personaId });
+export async function createConversation(title: string, backend: string, personaId?: string, pipelineTemplateId?: string): Promise<Conversation> {
+  return ipcInvoke<Conversation>(IPC.CONV_CREATE, { title, backend, personaId, pipelineTemplateId });
 }
 export async function getConversation(conversationId: string): Promise<{ conversation: Conversation; messages: Message[] }> {
   return ipcInvoke<any>(IPC.CONV_GET, { conversationId });
