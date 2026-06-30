@@ -1,5 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { applyChunk } from "./useMessages";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { applyChunk, useMessages } from "./useMessages";
+import * as chatIpc from "../ipc/chat";
 import type { Message } from "../../shared/types";
 
 const makeMsg = (overrides: Partial<Message>): Message => ({
@@ -11,6 +13,40 @@ const makeMsg = (overrides: Partial<Message>): Message => ({
   stepIndex: null,
   createdAt: 0,
   ...overrides,
+});
+
+vi.mock("../ipc/chat", () => ({
+  sendChat: vi.fn(),
+  onChatChunk: vi.fn(() => () => {}),
+  onChatDone: vi.fn(() => () => {}),
+  abortChat: vi.fn(),
+}));
+
+vi.mock("../ipc/conversation", () => ({
+  getConversation: vi.fn(() =>
+    Promise.resolve({ messages: [] }),
+  ),
+}));
+
+describe("useMessages", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("clears streaming state if sendChat throws", async () => {
+    vi.mocked(chatIpc.sendChat).mockRejectedValueOnce(new Error("network error"));
+    const { result } = renderHook(() => useMessages(null));
+
+    await act(async () => {
+      try {
+        await result.current.send("hello", "claude");
+      } catch {
+        // expected
+      }
+    });
+
+    expect(result.current.streaming).toBe(false);
+  });
 });
 
 describe("applyChunk", () => {
