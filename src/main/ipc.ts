@@ -107,6 +107,7 @@ export function registerIpcHandlers(win: BrowserWindow): void {
       );
       for await (const chunk of wrapped) {
         if (chunk.type === "text") fullContent += chunk.content;
+        if (chunk.type === "error") fullContent = `⚠ Error: ${chunk.content}`;
         event.sender.send(IPC.CHAT_CHUNK, {
           ...chunk,
           conversationId: conv.id,

@@ -12,7 +12,20 @@ beforeEach(() => {
 import { MessageList } from "../MessageList";
 
 describe("MessageList streaming indicator", () => {
-  it("shows a static '...' indicator during streaming", () => {
+  it("renders three animated dots when streaming", () => {
+    const { container } = render(
+      <MessageList messages={[]} streaming={true} conversationId={null} />,
+    );
+    const indicator = container.querySelector(
+      '[data-testid="streaming-indicator"]',
+    );
+    // Should have 3 child dot elements with animate-bounce class
+    const dots = indicator?.querySelectorAll("[data-testid='streaming-dot']");
+    expect(dots).toHaveLength(3);
+    expect(dots?.[0]).toHaveClass("animate-bounce");
+  });
+
+  it("shows an indicator during streaming", () => {
     const { container } = render(
       <MessageList messages={[]} streaming={true} conversationId={null} />,
     );
@@ -20,8 +33,6 @@ describe("MessageList streaming indicator", () => {
       '[data-testid="streaming-indicator"]',
     );
     expect(indicator).toBeTruthy();
-    expect(indicator?.textContent).toBe("...");
-    expect(indicator?.querySelectorAll(".animate-dot-fade").length).toBe(0);
   });
 
   it("hides indicator when not streaming", () => {
