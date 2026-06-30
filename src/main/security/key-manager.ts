@@ -17,12 +17,6 @@ function encryptionAvailable(): boolean {
   return safeStorage.isEncryptionAvailable();
 }
 
-if (!safeStorage.isEncryptionAvailable()) {
-  console.warn(
-    "[KeyManager] safeStorage unavailable — API keys will be stored as plaintext",
-  );
-}
-
 export const KeyManager = {
   storeKey(provider: string, key: string): void {
     const value = encryptionAvailable()

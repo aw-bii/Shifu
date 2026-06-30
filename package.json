@@ -87,7 +87,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^3.2.6",
     "autoprefixer": "^10.4.17",
-    "electron": "^33.0.0",
+    "electron": "^33.4.11",
     "electron-builder": "^24.9.1",
     "electron-vite": "^5.0.0",
     "jsdom": "^29.1.1",
