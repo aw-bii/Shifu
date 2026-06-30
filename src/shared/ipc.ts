@@ -25,6 +25,7 @@ export const IPC = {
   NET_CHECK: "net:check",
   NET_SET_PROXY: "net:set-proxy",
   NET_GET_PROXY: "net:get-proxy",
+  NET_OPEN_EXTERNAL: "net:open-external",
   PIPELINE_ABORT: "pipeline:abort",
   ATTACHMENT_INGEST: "attachment:ingest",
   ATTACHMENT_LIST: "attachment:list",
@@ -189,6 +190,7 @@ export interface IpcInvokeMap {
     noProxy: string;
   };
   [IPC.NET_GET_PROXY]: void;
+  [IPC.NET_OPEN_EXTERNAL]: { url: string };
 }
 
 export interface IpcPushMap {

@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, app } from "electron";
+import { ipcMain, BrowserWindow, app, shell } from "electron";
 import { IPC } from "../shared/ipc";
 import { AdapterManager, securityMiddleware } from "./adapters/manager";
 import { ConvStore } from "./store";
@@ -229,6 +229,13 @@ export function registerIpcHandlers(win: BrowserWindow): void {
       ConvStore.setSetting("proxy_no", noProxy || "");
     },
   );
+
+  ipcMain.handle(IPC.NET_OPEN_EXTERNAL, (_event, { url }: { url: string }) => {
+    const { protocol } = new URL(url);
+    if (protocol === "https:") {
+      shell.openExternal(url);
+    }
+  });
 
   ipcMain.handle(IPC.CONV_DELETE, (_event, { conversationId }) => {
     ConvStore.deleteConversation(conversationId);
