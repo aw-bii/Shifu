@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { installBackend, probeBackend } from "../../ipc/backend";
+import { relaunchApp } from "../../ipc/app";
 import { IPC } from "../../../shared/ipc";
 
 const LABELS: Record<string, string> = {
@@ -30,6 +31,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [filtered, setFiltered] = useState<string[]>(missing);
   const [reprobing, setReprobing] = useState(true);
+  const [needsRestart, setNeedsRestart] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +81,7 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
       if (probeResult.available) {
         setVerified((prev) => ({ ...prev, [id]: true }));
         setDone((prev) => ({ ...prev, [id]: true }));
+        setNeedsRestart(true);
       } else {
         setErrors((prev) => ({
           ...prev,
@@ -232,6 +235,22 @@ export function WizardStep2({ missing, onNext, onBack }: Props) {
           )}
         </div>
       ))}
+      {needsRestart && (
+        <div
+          data-testid="path-restart-banner"
+          className="flex items-center justify-between gap-3 px-4 py-3 bg-bubble rounded-xl border border-border text-xs"
+        >
+          <span className="text-text-muted">
+            Restart the app so new tools are detected on PATH.
+          </span>
+          <button
+            onClick={() => relaunchApp()}
+            className="btn-sm bg-primary text-on-primary hoverable:hover:bg-primary-dark flex-shrink-0"
+          >
+            Restart now
+          </button>
+        </div>
+      )}
       <button
         onClick={onNext}
         className="btn-lg bg-primary text-on-primary hoverable:hover:bg-primary-dark"
