@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { getSetting, setSetting, getAppVersion } from "../../ipc/settings";
 import { storeKey, deleteKey, hasKey } from "../../ipc/key";
 import { probeBackend } from "../../ipc/backend";
-import { getProxySettings, setProxySettings, openExternal } from "../../ipc/net";
+import {
+  getProxySettings,
+  setProxySettings,
+  openExternal,
+} from "../../ipc/net";
 
 const API_PROVIDERS = [
   { id: "openai", label: "OpenAI" },
@@ -22,7 +26,9 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [keyStates, setKeyStates] = useState<Record<string, boolean>>({});
   const [testing, setTesting] = useState<Record<string, boolean>>({});
-  const [testResults, setTestResults] = useState<Record<string, { success: boolean; message: string } | null>>({});
+  const [testResults, setTestResults] = useState<
+    Record<string, { success: boolean; message: string } | null>
+  >({});
   const [proxyHttp, setProxyHttp] = useState("");
   const [proxyHttps, setProxyHttps] = useState("");
   const [proxyNo, setProxyNo] = useState("");
@@ -163,7 +169,10 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
                         <button
                           onClick={async () => {
                             await deleteKey(p.id);
-                            setKeyStates((prev) => ({ ...prev, [p.id]: false }));
+                            setKeyStates((prev) => ({
+                              ...prev,
+                              [p.id]: false,
+                            }));
                           }}
                           className="btn-sm border border-danger-muted text-danger hoverable:hover:bg-danger-subtle text-xs px-2"
                         >
@@ -200,7 +209,9 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
                       </button>
                     </div>
                     {testResults[p.id] && (
-                      <span className={`text-xs mt-1 block ${testResults[p.id]!.success ? "text-success" : "text-danger"}`}>
+                      <span
+                        className={`text-xs mt-1 block ${testResults[p.id]!.success ? "text-success" : "text-danger"}`}
+                      >
                         {testResults[p.id]!.message}
                       </span>
                     )}
@@ -283,9 +294,11 @@ function OpenRouterSignIn() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    hasKey("openrouter").then((has) => {
-      if (has) setSaved(true);
-    }).catch(() => {});
+    hasKey("openrouter")
+      .then((has) => {
+        if (has) setSaved(true);
+      })
+      .catch(() => {});
   }, []);
 
   const openSignIn = async () => {
@@ -294,7 +307,10 @@ function OpenRouterSignIn() {
   };
 
   const save = async () => {
-    if (!value.trim()) { setError("Paste your key first."); return; }
+    if (!value.trim()) {
+      setError("Paste your key first.");
+      return;
+    }
     try {
       await storeKey("openrouter", value.trim());
       setSaved(true);
@@ -309,8 +325,18 @@ function OpenRouterSignIn() {
     <div className="flex flex-col gap-2">
       <label className="text-xs font-medium text-text-base">OpenRouter</label>
       {saved ? (
-        <p className="text-xs text-primary">Signed in ✓
-          <button onClick={async () => { await deleteKey("openrouter"); setSaved(false); setShowPaste(false); }} className="ml-2 text-text-muted underline text-xs">Remove</button>
+        <p className="text-xs text-primary">
+          Signed in ✓
+          <button
+            onClick={async () => {
+              await deleteKey("openrouter");
+              setSaved(false);
+              setShowPaste(false);
+            }}
+            className="ml-2 text-text-muted underline text-xs"
+          >
+            Remove
+          </button>
         </p>
       ) : (
         <button
@@ -323,13 +349,19 @@ function OpenRouterSignIn() {
       )}
       {showPaste && !saved && (
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-text-muted">Copy your API key from the browser tab that just opened, then paste it here.</p>
+          <p className="text-xs text-text-muted">
+            Copy your API key from the browser tab that just opened, then paste
+            it here.
+          </p>
           <div className="flex gap-2">
             <input
               type="password"
               placeholder="sk-or-v1-…"
               value={value}
-              onChange={(e) => { setValue(e.target.value); setError(""); }}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setError("");
+              }}
               className="flex-1 text-xs border rounded-lg px-3 py-1.5 bg-surface border-border-strong font-mono"
               aria-label="Paste OpenRouter key"
             />
