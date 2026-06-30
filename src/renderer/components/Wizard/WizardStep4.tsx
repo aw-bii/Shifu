@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { storeKey } from "../../ipc/key";
-import { probeBackend } from "../../ipc/backend";
 
 const API_BACKENDS = [
   { id: "claude-api", label: "Claude API Key", placeholder: "sk-ant-api03-…", keyName: "claude-api" },

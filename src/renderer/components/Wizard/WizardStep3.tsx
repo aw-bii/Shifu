@@ -113,7 +113,7 @@ export function WizardStep3({ statuses: initial, onComplete, onBack }: Props) {
         onClick={onComplete}
         className="btn-lg bg-primary text-on-primary hoverable:hover:bg-primary-dark"
       >
-        Finish Setup
+        Next
       </button>
       <button
         onClick={onBack}
