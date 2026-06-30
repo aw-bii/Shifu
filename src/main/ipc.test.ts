@@ -34,7 +34,7 @@ vi.mock("./attachments/service", () => ({
   },
 }));
 
-import { validatePersona, MAX_PROMPT_LENGTH, registerIpcHandlers } from "./ipc";
+import { validatePersona, MAX_PROMPT_LENGTH } from "./ipc";
 import { ConvStore } from "./store";
 import { AdapterManager, securityMiddleware } from "./adapters/manager";
 import { AttachmentService } from "./attachments/service";
@@ -90,9 +90,9 @@ describe("CHAT_SEND", () => {
       const message = "hello";
       const conversationId = null;
       const backend = "test";
-      const personaId = undefined;
+      const _personaId = undefined;
       const pregenMessageId = undefined;
-      const model = undefined;
+      const _model = undefined;
 
       const adapter = AdapterManager.get(backend) ?? AdapterManager.getActive();
       AdapterManager.setActive(adapter.id);
