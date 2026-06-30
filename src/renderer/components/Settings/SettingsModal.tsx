@@ -59,19 +59,10 @@ export function SettingsModal({
         role="dialog"
         aria-label="Settings"
         aria-modal="true"
-        className="relative bg-surface rounded-xl shadow-2xl flex overflow-hidden"
+        className="bg-surface rounded-xl shadow-2xl flex overflow-hidden"
         style={{ width: "min(760px, 95vw)", height: "min(560px, 90vh)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          aria-label="Close settings"
-          className="absolute top-3 right-3 btn-sm border border-border-strong hoverable:hover:bg-bubble z-10"
-        >
-          ✕
-        </button>
-
         {/* Left nav */}
         <nav className="w-36 flex-shrink-0 border-r border-border bg-surface-subtle flex flex-col py-3">
           {NAV_ITEMS.map((item) => (
@@ -89,27 +80,41 @@ export function SettingsModal({
           ))}
         </nav>
 
-        {/* Section content */}
-        <div className="flex-1 overflow-y-auto">
-          {section === "settings" && (
-            <SettingsPanel onClose={onClose} onReRunWizard={onReRunWizard} />
-          )}
-          {section === "personas" && (
-            <PersonaPanel
-              activePersonaId={activePersonaId}
-              onSelect={onPersonaSelect}
-              onClose={() => onSectionChange("settings")}
-            />
-          )}
-          {section === "pipelines" && (
-            <PipelinePanel
-              activeTemplateId={activeTemplateId}
-              onSelect={onTemplateSelect}
-              onClose={() => onSectionChange("settings")}
-            />
-          )}
-          {section === "mcp" && <McpPanel />}
-          {section === "cron" && <CronPanel />}
+        {/* Right column: header with close button + scrollable content */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header row — keeps close button out of scrollable content */}
+          <div className="flex items-center justify-end px-3 py-2 border-b border-border flex-shrink-0">
+            <button
+              onClick={onClose}
+              aria-label="Close settings"
+              className="btn-sm border border-border-strong hoverable:hover:bg-bubble"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Scrollable section content */}
+          <div className="flex-1 overflow-y-auto">
+            {section === "settings" && (
+              <SettingsPanel onClose={onClose} onReRunWizard={onReRunWizard} />
+            )}
+            {section === "personas" && (
+              <PersonaPanel
+                activePersonaId={activePersonaId}
+                onSelect={onPersonaSelect}
+                onClose={() => onSectionChange("settings")}
+              />
+            )}
+            {section === "pipelines" && (
+              <PipelinePanel
+                activeTemplateId={activeTemplateId}
+                onSelect={onTemplateSelect}
+                onClose={() => onSectionChange("settings")}
+              />
+            )}
+            {section === "mcp" && <McpPanel />}
+            {section === "cron" && <CronPanel />}
+          </div>
         </div>
       </div>
     </div>

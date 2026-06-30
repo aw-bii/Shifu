@@ -127,6 +127,24 @@ describe("SettingsModal", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it("close button is not positioned absolute over content", () => {
+    render(
+      <SettingsModal
+        open={true}
+        section="settings"
+        onClose={vi.fn()}
+        onSectionChange={vi.fn()}
+        onReRunWizard={vi.fn()}
+        activePersonaId={null}
+        onPersonaSelect={vi.fn()}
+        activeTemplateId={null}
+        onTemplateSelect={vi.fn()}
+      />,
+    );
+    const closeBtn = screen.getByRole("button", { name: /Close settings/i });
+    expect(closeBtn.className).not.toMatch(/\babsolute\b/);
+  });
+
   it("does not show a Plugins nav item", () => {
     render(
       <SettingsModal

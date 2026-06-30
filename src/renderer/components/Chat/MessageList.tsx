@@ -68,9 +68,17 @@ export const MessageList = memo(function MessageList({
         <div className="flex justify-start mb-3">
           <div
             data-testid="streaming-indicator"
-            className="bg-bubble rounded-2xl px-4 py-3 text-text-muted text-sm"
+            className="bg-bubble rounded-2xl px-4 py-3 flex items-center gap-1"
+            aria-label="Generating response"
           >
-            ...
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                data-testid="streaming-dot"
+                className="w-1.5 h-1.5 rounded-full bg-text-muted animate-bounce"
+                style={{ animationDelay: `${i * 150}ms` }}
+              />
+            ))}
           </div>
         </div>
       )}

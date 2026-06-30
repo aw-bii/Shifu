@@ -36,6 +36,7 @@ export const IPC = {
   SETTING_SET: "setting:set",
   SETTING_GET_ALL: "setting:get-all",
   APP_VERSION: "app:version",
+  APP_RELAUNCH: "app:relaunch",
   CONV_DELETE: "conv:delete",
   CONV_RENAME: "conv:rename",
   UPDATE_DOWNLOAD: "update:download",
@@ -134,6 +135,7 @@ export interface IpcInvokeMap {
   [IPC.SETTING_SET]: { key: string; value: string };
   [IPC.SETTING_GET_ALL]: void;
   [IPC.APP_VERSION]: void;
+  [IPC.APP_RELAUNCH]: void;
   [IPC.CONV_DELETE]: { conversationId: string };
   [IPC.SECURITY_RESPOND]: import("./types").SecurityRespondPayload;
   [IPC.CONV_RENAME]: { conversationId: string; title: string };

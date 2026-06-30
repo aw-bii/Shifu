@@ -107,6 +107,7 @@ export function registerIpcHandlers(win: BrowserWindow): void {
       );
       for await (const chunk of wrapped) {
         if (chunk.type === "text") fullContent += chunk.content;
+        if (chunk.type === "error") fullContent = `⚠ Error: ${chunk.content}`;
         event.sender.send(IPC.CHAT_CHUNK, {
           ...chunk,
           conversationId: conv.id,
@@ -247,6 +248,11 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   });
 
   ipcMain.handle(IPC.APP_VERSION, () => app.getVersion());
+
+  ipcMain.handle(IPC.APP_RELAUNCH, () => {
+    app.relaunch();
+    app.exit(0);
+  });
 
   ipcMain.handle(IPC.SETTING_GET, (_event, { key }) =>
     ConvStore.getSetting(key),

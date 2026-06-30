@@ -112,16 +112,21 @@ export function useMessages(conversationId: string | null) {
         createdAt: Date.now(),
       };
       setMessages((prev) => [...prev, userMsg, assistantPlaceholder]);
-      const newConvId = await sendChat({
-        conversationId,
-        message,
-        backend,
-        personaId,
-        messageId,
-        model,
-      });
-      currentConvId.current = newConvId;
-      return newConvId;
+      try {
+        const newConvId = await sendChat({
+          conversationId,
+          message,
+          backend,
+          personaId,
+          messageId,
+          model,
+        });
+        currentConvId.current = newConvId;
+        return newConvId;
+      } catch (err) {
+        setStreaming(false);
+        throw err;
+      }
     },
     [conversationId],
   );
