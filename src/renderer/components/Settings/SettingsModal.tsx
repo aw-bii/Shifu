@@ -3,7 +3,6 @@ import { PersonaPanel } from "../Personas/PersonaPanel";
 import { PipelinePanel } from "../Pipelines/PipelinePanel";
 import { CronPanel } from "../../panels/CronPanel/CronPanel";
 import { McpPanel } from "../Sidebar/McpPanel";
-import { PluginPanel } from "../Sidebar/PluginPanel";
 import type { PipelineTemplate } from "../../../shared/types";
 
 export type SettingsSection =
@@ -11,8 +10,7 @@ export type SettingsSection =
   | "personas"
   | "pipelines"
   | "mcp"
-  | "cron"
-  | "plugins";
+  | "cron";
 
 const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
   { id: "settings", label: "Settings" },
@@ -20,7 +18,6 @@ const NAV_ITEMS: { id: SettingsSection; label: string }[] = [
   { id: "pipelines", label: "Pipelines" },
   { id: "mcp", label: "MCP Servers" },
   { id: "cron", label: "Cron Jobs" },
-  { id: "plugins", label: "Plugins" },
 ];
 
 interface Props {
@@ -111,7 +108,6 @@ export function SettingsModal({
           )}
           {section === "mcp" && <McpPanel />}
           {section === "cron" && <CronPanel />}
-          {section === "plugins" && <PluginPanel />}
         </div>
       </div>
     </div>
