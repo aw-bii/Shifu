@@ -7,6 +7,7 @@ import {
   setProxySettings,
   openExternal,
 } from "../../ipc/net";
+import { DangerZone } from "./DangerZone";
 
 const API_PROVIDERS = [
   { id: "openai", label: "OpenAI" },
@@ -279,6 +280,7 @@ export function SettingsPanel({ onClose, onReRunWizard }: Props) {
             Re-run Setup Wizard
           </button>
         </div>
+        <DangerZone />
         <div className="text-xs text-text-muted pt-4 border-t border-border">
           Version {version || "0.2.0"}
         </div>
